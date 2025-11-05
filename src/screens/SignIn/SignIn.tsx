@@ -8,8 +8,6 @@ export const SignIn = (): JSX.Element => {
   const navigate = useNavigate();
   return (
     <div className="bg-white w-full min-w-[390px] min-h-[844px] flex flex-col relative">
-      <header className="w-full h-[47px] bg-[#d9d9d9] flex-shrink-0" />
-
       <main className="flex-1 flex flex-col px-[35px] pt-[39px] pb-0">
         <Button
           variant="ghost"
@@ -28,7 +26,7 @@ export const SignIn = (): JSX.Element => {
         </div>
 
         <h1 className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-3xl tracking-[0] leading-[normal] mb-[18px]">
-          Sign up
+          Log in
         </h1>
 
         <div className="flex flex-col gap-[20px] mb-[20px]">
@@ -57,10 +55,10 @@ export const SignIn = (): JSX.Element => {
         </div>
 
         <Button className="w-full h-[55px] bg-[#58419f] hover:bg-[#58419f]/90 rounded-[10px] [font-family:'Darker_Grotesque',Helvetica] font-bold text-white text-[25px] tracking-[0] leading-[normal] mb-[30px]">
-          Sign up
+          Log In
         </Button>
 
-        <div className="flex items-center gap-[15px] mb-[27px]">
+        {/* <div className="flex items-center gap-[15px] mb-[27px]">
           <div className="flex-1 h-px bg-[#d9d9d9]" />
           <span className="[font-family:'Darker_Grotesque',Helvetica] font-normal text-[#444444] text-[25px] tracking-[0] leading-[normal]">
             or
@@ -83,14 +81,12 @@ export const SignIn = (): JSX.Element => {
               src="/facebook---original.svg"
             />
           </Button>
-        </div>
+        </div> */}
 
         <p className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[22px] tracking-[0] leading-[normal] text-center">
           Don&apos;t have an account? <button onClick={() => navigate("/sign-up")} className="text-[#58419f] hover:underline">Sign up here.</button>
         </p>
       </main>
-
-      <footer className="w-full h-[34px] bg-[#d9d9d9] flex-shrink-0" />
     </div>
   );
 };

@@ -9,8 +9,6 @@ export const SignUp = (): JSX.Element => {
 
   return (
     <div className="bg-white w-full min-w-[390px] min-h-[844px] flex flex-col relative">
-      <header className="w-full h-[47px] bg-[#d9d9d9] flex-shrink-0" />
-
       <main className="flex-1 flex flex-col px-[35px] pt-[39px] pb-0">
         <Button
           variant="ghost"
@@ -69,7 +67,7 @@ export const SignUp = (): JSX.Element => {
           Create Account
         </Button>
 
-        <div className="flex items-center gap-[15px] mb-[27px]">
+        {/* <div className="flex items-center gap-[15px] mb-[27px]">
           <div className="flex-1 h-px bg-[#d9d9d9]" />
           <span className="[font-family:'Darker_Grotesque',Helvetica] font-normal text-[#444444] text-[25px] tracking-[0] leading-[normal]">
             or
@@ -92,14 +90,12 @@ export const SignUp = (): JSX.Element => {
               src="/facebook---original.svg"
             />
           </Button>
-        </div>
+        </div> */}
 
         <p className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[22px] tracking-[0] leading-[normal] text-center">
-          Already have an account? <button onClick={() => navigate("/")} className="text-[#58419f] hover:underline">Sign in here.</button>
+          Already have an account? <button onClick={() => navigate("/")} className="text-[#58419f] hover:underline">Log in here.</button>
         </p>
       </main>
-
-      <footer className="w-full h-[34px] bg-[#d9d9d9] flex-shrink-0" />
     </div>
   );
 };
