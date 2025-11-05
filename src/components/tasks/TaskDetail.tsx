@@ -1,264 +1,189 @@
-import { ArrowLeftIcon, CalendarIcon, FlagIcon, TrashIcon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, CalendarIcon, TrashIcon, XIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
-import { Task } from "../../lib/supabase";
+import { TaskItem, Subtask } from "../../data/dummyTasks";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 
 type TaskDetailProps = {
-  task: Task | null;
+  task: TaskItem | null;
   onClose: () => void;
-  onUpdate: (taskId: string, updates: Partial<Task>) => void;
+  onUpdate: (taskId: string, updates: Partial<TaskItem>) => void;
   onDelete: (taskId: string) => void;
   isMobile: boolean;
 };
 
 export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onUpdate, onDelete, isMobile }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedTask, setEditedTask] = useState<Partial<Task>>({});
-
-  React.useEffect(() => {
-    if (task) {
-      setEditedTask({
-        title: task.title,
-        description: task.description,
-        status: task.status,
-        priority: task.priority,
-        due_date: task.due_date,
-      });
-    }
-  }, [task]);
+  const [newSubtask, setNewSubtask] = useState("");
 
   if (!task) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-50">
-        <p className="[font-family:'Darker_Grotesque',Helvetica] font-normal text-[#7c7c7c] text-[22px]">
-          Select a task to view details
-        </p>
+        <p className="text-gray-500 font-medium">Select a task to view details</p>
       </div>
     );
   }
 
-  const handleSave = () => {
-    if (editedTask.title && editedTask.title.trim()) {
-      onUpdate(task.id, editedTask);
-      setIsEditing(false);
+  const handleAddSubtask = () => {
+    if (newSubtask.trim()) {
+      const updatedSubtasks = [
+        ...task.subtasks,
+        { id: Date.now().toString(), title: newSubtask, completed: false },
+      ];
+      onUpdate(task.id, { subtasks: updatedSubtasks });
+      setNewSubtask("");
     }
   };
 
-  const handleCancel = () => {
-    setEditedTask({
-      title: task.title,
-      description: task.description,
-      status: task.status,
-      priority: task.priority,
-      due_date: task.due_date,
-    });
-    setIsEditing(false);
+  const handleToggleSubtask = (subtaskId: string) => {
+    const updatedSubtasks = task.subtasks.map((s) =>
+      s.id === subtaskId ? { ...s, completed: !s.completed } : s
+    );
+    onUpdate(task.id, { subtasks: updatedSubtasks });
   };
 
-  const formatDate = (date: string | null) => {
-    if (!date) return "No due date";
-    const d = new Date(date);
-    return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  const handleDeleteSubtask = (subtaskId: string) => {
+    const updatedSubtasks = task.subtasks.filter((s) => s.id !== subtaskId);
+    onUpdate(task.id, { subtasks: updatedSubtasks });
   };
 
   return (
     <div className="flex flex-col h-full bg-white">
-      <div className="flex items-center justify-between p-6 border-b border-[#ebebeb]">
+      <div className="flex items-center justify-between p-6 border-b border-gray-100">
         <div className="flex items-center gap-3">
           {isMobile && (
             <Button variant="ghost" size="icon" onClick={onClose}>
               <ArrowLeftIcon className="w-5 h-5" />
             </Button>
           )}
-          <h2 className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-2xl">
-            Task Details
-          </h2>
+          <h2 className="text-xl font-bold text-gray-900">Task:</h2>
         </div>
-        <div className="flex items-center gap-2">
-          {!isMobile && (
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <XIcon className="w-5 h-5" />
-            </Button>
+        {!isMobile && (
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <XIcon className="w-5 h-5" />
+          </Button>
+        )}
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-3">{task.title}</h3>
+          {task.description && (
+            <p className="text-gray-700 font-medium">{task.description}</p>
           )}
+        </div>
+
+        <div className="space-y-3">
+          <h4 className="text-sm font-bold text-gray-500 uppercase">Description</h4>
+          <p className="text-gray-600">{task.description}</p>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-sm font-medium text-gray-600">List</h4>
+              <div className="flex items-center gap-2 mt-1">
+                <div className={`w-3 h-3 rounded-full ${task.listColor}`} />
+                <select
+                  value={task.listId}
+                  onChange={(e) => onUpdate(task.id, { listId: e.target.value })}
+                  className="bg-transparent text-gray-900 font-medium text-sm focus:outline-none"
+                >
+                  <option value="personal">Personal</option>
+                  <option value="work">Work</option>
+                  <option value="list1">List 1</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-gray-600">Due date</h4>
+              <input
+                type="date"
+                value={task.dueDate}
+                onChange={(e) => onUpdate(task.id, { dueDate: e.target.value })}
+                className="bg-transparent text-gray-900 font-medium text-sm focus:outline-none border-b border-gray-200"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium text-gray-600">Tags</h4>
+          <div className="flex gap-2 flex-wrap">
+            {task.tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="px-3 py-1 bg-cyan-100 text-cyan-700 rounded-full text-sm font-medium"
+              >
+                {tag.name}
+              </span>
+            ))}
+            <button className="text-cyan-600 font-medium text-sm hover:text-cyan-700">
+              + Add Tag
+            </button>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-100 pt-6 space-y-3">
+          <h4 className="text-lg font-bold text-gray-900">Subtasks:</h4>
+          <div className="space-y-2">
+            {task.subtasks.map((subtask) => (
+              <div key={subtask.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <input
+                  type="checkbox"
+                  checked={subtask.completed}
+                  onChange={() => handleToggleSubtask(subtask.id)}
+                  className="w-4 h-4 text-gray-400 cursor-pointer"
+                />
+                <span
+                  className={`flex-1 text-gray-700 ${
+                    subtask.completed ? "line-through text-gray-400" : ""
+                  }`}
+                >
+                  {subtask.title}
+                </span>
+                <button
+                  onClick={() => handleDeleteSubtask(subtask.id)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newSubtask}
+              onChange={(e) => setNewSubtask(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") handleAddSubtask();
+              }}
+              placeholder="Add New Subtask"
+              className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <Button
+              onClick={handleAddSubtask}
+              variant="ghost"
+              size="icon"
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <PlusIcon className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
-        {isEditing ? (
-          <div className="space-y-6">
-            <div>
-              <label className="block mb-2 [font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[20px]">
-                Title
-              </label>
-              <Input
-                type="text"
-                value={editedTask.title || ""}
-                onChange={(e) => setEditedTask({ ...editedTask, title: e.target.value })}
-                className="h-[50px] [font-family:'Darker_Grotesque',Helvetica] text-[22px]"
-              />
-            </div>
-
-            <div>
-              <label className="block mb-2 [font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[20px]">
-                Description
-              </label>
-              <textarea
-                value={editedTask.description || ""}
-                onChange={(e) => setEditedTask({ ...editedTask, description: e.target.value })}
-                rows={5}
-                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-lg shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [font-family:'Darker_Grotesque',Helvetica]"
-              />
-            </div>
-
-            <div>
-              <label className="block mb-2 [font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[20px]">
-                Status
-              </label>
-              <select
-                value={editedTask.status || "todo"}
-                onChange={(e) => setEditedTask({ ...editedTask, status: e.target.value as Task["status"] })}
-                className="w-full h-[50px] rounded-md border border-input bg-transparent px-3 text-lg shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [font-family:'Darker_Grotesque',Helvetica]"
-              >
-                <option value="todo">To Do</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block mb-2 [font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[20px]">
-                Priority
-              </label>
-              <select
-                value={editedTask.priority || "medium"}
-                onChange={(e) => setEditedTask({ ...editedTask, priority: e.target.value as Task["priority"] })}
-                className="w-full h-[50px] rounded-md border border-input bg-transparent px-3 text-lg shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [font-family:'Darker_Grotesque',Helvetica]"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block mb-2 [font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[20px]">
-                Due Date
-              </label>
-              <Input
-                type="date"
-                value={editedTask.due_date ? new Date(editedTask.due_date).toISOString().split('T')[0] : ""}
-                onChange={(e) => setEditedTask({ ...editedTask, due_date: e.target.value })}
-                className="h-[50px] [font-family:'Darker_Grotesque',Helvetica] text-[22px]"
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                onClick={handleSave}
-                className="flex-1 h-[50px] bg-[#58419f] hover:bg-[#58419f]/90 [font-family:'Darker_Grotesque',Helvetica] font-bold text-[22px]"
-              >
-                Save Changes
-              </Button>
-              <Button
-                onClick={handleCancel}
-                variant="outline"
-                className="flex-1 h-[50px] [font-family:'Darker_Grotesque',Helvetica] font-bold text-[22px]"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div>
-              <h3 className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[28px] mb-2">
-                {task.title}
-              </h3>
-              {task.description && (
-                <p className="[font-family:'Darker_Grotesque',Helvetica] font-normal text-[#7c7c7c] text-[20px] whitespace-pre-wrap">
-                  {task.description}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[20px] w-24">
-                  Status:
-                </span>
-                <span
-                  className={`
-                    px-3 py-1 rounded-md text-sm font-medium
-                    [font-family:'Darker_Grotesque',Helvetica]
-                    ${
-                      task.status === "completed"
-                        ? "bg-green-100 text-green-700"
-                        : task.status === "in_progress"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-gray-100 text-gray-700"
-                    }
-                  `}
-                >
-                  {task.status.replace("_", " ")}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <span className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[20px] w-24">
-                  Priority:
-                </span>
-                <span className="flex items-center gap-2">
-                  <FlagIcon
-                    className={`w-5 h-5 ${
-                      task.priority === "high"
-                        ? "text-red-500"
-                        : task.priority === "medium"
-                        ? "text-orange-500"
-                        : "text-green-500"
-                    }`}
-                  />
-                  <span className="[font-family:'Darker_Grotesque',Helvetica] font-normal text-[#212529] text-[20px] capitalize">
-                    {task.priority}
-                  </span>
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <span className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[20px] w-24">
-                  Due Date:
-                </span>
-                <span className="flex items-center gap-2">
-                  <CalendarIcon className="w-5 h-5 text-[#7c7c7c]" />
-                  <span className="[font-family:'Darker_Grotesque',Helvetica] font-normal text-[#212529] text-[20px]">
-                    {formatDate(task.due_date)}
-                  </span>
-                </span>
-              </div>
-            </div>
-
-            <div className="pt-6 space-y-3">
-              <Button
-                onClick={() => setIsEditing(true)}
-                className="w-full h-[50px] bg-[#58419f] hover:bg-[#58419f]/90 [font-family:'Darker_Grotesque',Helvetica] font-bold text-[22px]"
-              >
-                Edit Task
-              </Button>
-              <Button
-                onClick={() => {
-                  if (confirm("Are you sure you want to delete this task?")) {
-                    onDelete(task.id);
-                  }
-                }}
-                variant="outline"
-                className="w-full h-[50px] border-red-500 text-red-500 hover:bg-red-50 [font-family:'Darker_Grotesque',Helvetica] font-bold text-[22px]"
-              >
-                <TrashIcon className="w-5 h-5 mr-2" />
-                Delete Task
-              </Button>
-            </div>
-          </div>
-        )}
+      <div className="border-t border-gray-100 p-6 flex gap-3">
+        <Button
+          onClick={() => onDelete(task.id)}
+          variant="outline"
+          className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50"
+        >
+          Delete Task
+        </Button>
+        <Button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold">
+          Save changes
+        </Button>
       </div>
     </div>
   );

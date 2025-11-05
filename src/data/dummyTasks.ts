@@ -1,0 +1,193 @@
+export type Subtask = {
+  id: string;
+  title: string;
+  completed: boolean;
+};
+
+export type Tag = {
+  id: string;
+  name: string;
+  color: string;
+};
+
+export type TaskList = {
+  id: string;
+  name: string;
+  color: string;
+  count: number;
+};
+
+export type TaskItem = {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  listId: string;
+  listName: string;
+  listColor: string;
+  subtasks: Subtask[];
+  tags: Tag[];
+  completed: boolean;
+};
+
+export const dummyLists: TaskList[] = [
+  { id: "personal", name: "Personal", color: "bg-red-400", count: 3 },
+  { id: "work", name: "Work", color: "bg-cyan-400", count: 6 },
+  { id: "list1", name: "List 1", color: "bg-yellow-400", count: 3 },
+];
+
+export const dummyTags: Tag[] = [
+  { id: "tag1", name: "Tag 1", color: "bg-cyan-100 text-cyan-700" },
+  { id: "tag2", name: "Tag 2", color: "bg-red-100 text-red-700" },
+];
+
+export const dummyTasks: TaskItem[] = [
+  {
+    id: "1",
+    title: "Research content ideas",
+    description: "Brainstorm and research new content topics for the blog",
+    dueDate: "",
+    listId: "personal",
+    listName: "Personal",
+    listColor: "bg-red-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "2",
+    title: "Create a database of guest authors",
+    description: "Compile a comprehensive list of potential guest authors for collaboration",
+    dueDate: "",
+    listId: "personal",
+    listName: "Personal",
+    listColor: "bg-red-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "3",
+    title: "Renew driver's license",
+    description: "Complete the renewal process for driver's license before expiration",
+    dueDate: "22-03-22",
+    listId: "personal",
+    listName: "Personal",
+    listColor: "bg-red-400",
+    subtasks: [{ id: "s1", title: "Subtask", completed: false }],
+    tags: [{ id: "tag1", name: "Tag 1", color: "bg-red-400" }],
+    completed: false,
+  },
+  {
+    id: "4",
+    title: "Consult accountant",
+    description: "Schedule and meet with accountant for financial planning",
+    dueDate: "",
+    listId: "work",
+    listName: "List 1",
+    listColor: "bg-yellow-400",
+    subtasks: [
+      { id: "s1", title: "Subtask 1", completed: false },
+      { id: "s2", title: "Subtask 2", completed: false },
+      { id: "s3", title: "Subtask 3", completed: false },
+    ],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "5",
+    title: "Print business card",
+    description: "Design and print business cards for upcoming events",
+    dueDate: "",
+    listId: "work",
+    listName: "Work",
+    listColor: "bg-cyan-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "6",
+    title: "Complete project report",
+    description: "Finalize and submit the quarterly project report",
+    dueDate: "25-03-22",
+    listId: "work",
+    listName: "Work",
+    listColor: "bg-cyan-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "7",
+    title: "Update website content",
+    description: "Refresh the website with latest information and images",
+    dueDate: "",
+    listId: "work",
+    listName: "Work",
+    listColor: "bg-cyan-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "8",
+    title: "Schedule team meeting",
+    description: "Organize and send calendar invites for weekly team sync",
+    dueDate: "20-03-22",
+    listId: "work",
+    listName: "Work",
+    listColor: "bg-cyan-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "9",
+    title: "Review code changes",
+    description: "Review pending pull requests from the development team",
+    dueDate: "23-03-22",
+    listId: "work",
+    listName: "Work",
+    listColor: "bg-cyan-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "10",
+    title: "Send proposal to client",
+    description: "Prepare and send the project proposal to the client",
+    dueDate: "24-03-22",
+    listId: "work",
+    listName: "Work",
+    listColor: "bg-cyan-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "11",
+    title: "Prepare presentation slides",
+    description: "Create presentation slides for the client meeting",
+    dueDate: "",
+    listId: "list1",
+    listName: "List 1",
+    listColor: "bg-yellow-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+  {
+    id: "12",
+    title: "Organize office supplies",
+    description: "Order and organize office supplies for the team",
+    dueDate: "",
+    listId: "list1",
+    listName: "List 1",
+    listColor: "bg-yellow-400",
+    subtasks: [],
+    tags: [],
+    completed: false,
+  },
+];

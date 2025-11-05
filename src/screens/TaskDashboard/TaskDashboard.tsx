@@ -1,20 +1,17 @@
-import { MenuIcon, PlusIcon, SearchIcon } from "lucide-react";
+import { MenuIcon, PlusIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { TaskDetail } from "../../components/tasks/TaskDetail";
 import { TaskList } from "../../components/tasks/TaskList";
 import { Sidebar } from "../../components/tasks/Sidebar";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { supabase, Task } from "../../lib/supabase";
+import { dummyTasks, dummyLists, dummyTags, TaskItem } from "../../data/dummyTasks";
 
 export const TaskDashboard = (): JSX.Element => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskItem[]>(dummyTasks);
+  const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>(dummyTasks);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isCreatingTask, setIsCreatingTask] = useState(false);
+  const [selectedListId, setSelectedListId] = useState<string | null>("today");
   const [isMobile, setIsMobile] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
 
@@ -28,40 +25,14 @@ export const TaskDashboard = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  useEffect(() => {
     filterTasks();
-  }, [tasks, activeFilter, searchQuery]);
-
-  const fetchTasks = async () => {
-    const { data, error } = await supabase
-      .from("tasks")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching tasks:", error);
-    } else {
-      setTasks(data || []);
-    }
-  };
+  }, [tasks, selectedListId]);
 
   const filterTasks = () => {
     let filtered = [...tasks];
 
-    if (activeFilter !== "all") {
-      filtered = filtered.filter((task) => task.status === activeFilter);
-    }
-
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (task) =>
-          task.title.toLowerCase().includes(query) ||
-          task.description.toLowerCase().includes(query)
-      );
+    if (selectedListId && selectedListId !== "today") {
+      filtered = filtered.filter((task) => task.listId === selectedListId);
     }
 
     setFilteredTasks(filtered);
@@ -78,60 +49,17 @@ export const TaskDashboard = (): JSX.Element => {
     if (isMobile) {
       setShowDetail(false);
     }
+  };
+
+  const handleUpdateTask = (taskId: string, updates: Partial<TaskItem>) => {
+    setTasks(tasks.map((task) => (task.id === taskId ? { ...task, ...updates } : task)));
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    setTasks(tasks.filter((task) => task.id !== taskId));
     setSelectedTaskId(null);
-  };
-
-  const handleNewTask = async () => {
-    const newTask = {
-      user_id: "00000000-0000-0000-0000-000000000000",
-      title: "New Task",
-      description: "",
-      status: "todo" as const,
-      priority: "medium" as const,
-      due_date: null,
-    };
-
-    const { data, error } = await supabase
-      .from("tasks")
-      .insert([newTask])
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error creating task:", error);
-    } else {
-      setTasks([data, ...tasks]);
-      setSelectedTaskId(data.id);
-      if (isMobile) {
-        setShowDetail(true);
-      }
-    }
-  };
-
-  const handleUpdateTask = async (taskId: string, updates: Partial<Task>) => {
-    const { error } = await supabase
-      .from("tasks")
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq("id", taskId);
-
-    if (error) {
-      console.error("Error updating task:", error);
-    } else {
-      setTasks(tasks.map((task) => (task.id === taskId ? { ...task, ...updates } : task)));
-    }
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
-
-    if (error) {
-      console.error("Error deleting task:", error);
-    } else {
-      setTasks(tasks.filter((task) => task.id !== taskId));
-      setSelectedTaskId(null);
-      if (isMobile) {
-        setShowDetail(false);
-      }
+    if (isMobile) {
+      setShowDetail(false);
     }
   };
 
@@ -145,17 +73,18 @@ export const TaskDashboard = (): JSX.Element => {
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        activeFilter={activeFilter}
-        onFilterChange={(filter) => {
-          setActiveFilter(filter);
+        selectedListId={selectedListId}
+        onListSelect={(listId) => {
+          setSelectedListId(listId);
           setSidebarOpen(false);
         }}
-        onNewTask={handleNewTask}
+        lists={dummyLists}
+        tags={dummyTags}
       />
 
       {shouldShowTaskList && (
-        <div className="flex-1 flex flex-col min-w-0 border-r border-[#ebebeb]">
-          <div className="flex items-center gap-3 p-4 border-b border-[#ebebeb]">
+        <div className="flex-1 flex flex-col min-w-0 border-r border-gray-200">
+          <div className="flex items-center gap-4 p-6 border-b border-gray-200">
             <Button
               variant="ghost"
               size="icon"
@@ -164,28 +93,15 @@ export const TaskDashboard = (): JSX.Element => {
             >
               <MenuIcon className="w-6 h-6" />
             </Button>
-
-            <div className="flex-1 relative">
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#7c7c7c]" />
-              <Input
-                type="text"
-                placeholder="Search tasks..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-[45px] [font-family:'Darker_Grotesque',Helvetica] text-[20px]"
-              />
-            </div>
-
-            <Button
-              onClick={handleNewTask}
-              size="icon"
-              className="lg:hidden w-[45px] h-[45px] bg-[#58419f] hover:bg-[#58419f]/90"
-            >
-              <PlusIcon className="w-5 h-5" />
-            </Button>
+            <h1 className="text-2xl font-bold text-gray-900">Today</h1>
+            <span className="text-2xl font-bold text-gray-400">{filteredTasks.length}</span>
           </div>
 
           <div className="flex-1 overflow-y-auto">
+            <button className="w-full flex items-center gap-2 p-6 text-gray-600 hover:text-gray-900 transition-colors border-b border-gray-200">
+              <PlusIcon className="w-5 h-5" />
+              <span className="font-medium">Add New Task</span>
+            </button>
             <TaskList
               tasks={filteredTasks}
               selectedTaskId={selectedTaskId}
@@ -196,7 +112,7 @@ export const TaskDashboard = (): JSX.Element => {
       )}
 
       {shouldShowTaskDetail && (
-        <div className={`${isMobile ? "fixed inset-0 z-50" : "flex-1"} bg-white`}>
+        <div className={`${isMobile ? "fixed inset-0 z-50" : "flex-1 min-w-0"} bg-white`}>
           <TaskDetail
             task={selectedTask}
             onClose={handleCloseDetail}
