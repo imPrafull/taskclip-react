@@ -132,7 +132,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${list.color}`} />
+                    <div className={`w-3 h-3 rounded-sm ${list.color}`} />
                     <span className="font-medium text-gray-700">{list.name}</span>
                   </div>
                   <span className="text-sm text-gray-500 font-medium">{list.count}</span>
@@ -149,7 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {tags.map((tag) => (
                 <button
                   key={tag.id}
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${tag.color} transition-colors hover:opacity-80`}
+                  className={`px-3 py-1 rounded-md text-sm font-medium ${tag.color} transition-colors hover:opacity-80`}
                 >
                   {tag.name}
                 </button>
@@ -164,14 +164,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="border-t border-gray-200 p-6 space-y-2">
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 text-gray-700 hover:text-gray-900"
+            className="w-full !justify-start gap-3 text-gray-700 hover:text-gray-900"
           >
             <SettingsIcon className="w-5 h-5" />
             Settings
           </Button>
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 text-gray-700 hover:text-gray-900"
+            className="w-full !justify-start gap-3 text-gray-700 hover:text-gray-900"
           >
             <LogOutIcon className="w-5 h-5" />
             Sign out

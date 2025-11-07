@@ -81,7 +81,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onUpdate,
             <div>
               <h4 className="text-sm font-medium text-gray-600">List</h4>
               <div className="flex items-center gap-2 mt-1">
-                <div className={`w-3 h-3 rounded-full ${task.listColor}`} />
+                <div className={`w-3 h-3 rounded-sm ${task.listColor}`} />
                 <select
                   value={task.listId}
                   onChange={(e) => onUpdate(task.id, { listId: e.target.value })}
