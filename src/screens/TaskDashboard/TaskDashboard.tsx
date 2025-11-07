@@ -53,6 +53,7 @@ export const TaskDashboard = (): JSX.Element => {
   const handleAddNewTask = () => {
     setFormMode("create");
     setEditingTask(null);
+    setSelectedTaskId(null);
     setViewMode("form");
     if (isMobile) {
       setShowDetail(true);
