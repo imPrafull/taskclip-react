@@ -48,6 +48,7 @@ module.exports = {
       },
       fontFamily: {
         sans: [
+          "Darker Grotesque",
           "ui-sans-serif",
           "system-ui",
           "sans-serif",

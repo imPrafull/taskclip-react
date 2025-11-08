@@ -122,6 +122,7 @@ export const TaskDashboard = (): JSX.Element => {
     if (viewMode === "form") {
       return (
         <TaskForm
+          key={formMode === "create" ? "create" : editingTask?.id}
           task={editingTask}
           onClose={handleCloseDetail}
           onSave={handleSaveTask}

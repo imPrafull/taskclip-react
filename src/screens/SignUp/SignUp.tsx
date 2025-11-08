@@ -1,5 +1,4 @@
 import { ChevronLeftIcon, EyeOffIcon } from "lucide-react";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -8,8 +7,8 @@ export const SignUp = (): JSX.Element => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white w-full min-w-[390px] min-h-[844px] flex flex-col relative">
-      <main className="flex-1 flex flex-col px-[35px] pt-[39px] pb-0">
+    <div className="bg-white w-full flex flex-col relative">
+      <main className="w-full flex-1 flex flex-col px-8 py-8 pt-8 max-w-md mx-auto">
         <Button
           variant="ghost"
           size="icon"
@@ -27,23 +26,19 @@ export const SignUp = (): JSX.Element => {
           />
         </div>
 
-        <h1 className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-3xl tracking-[0] leading-[normal] mb-[18px]">
-          Create Account
-        </h1>
-
         <div className="flex flex-col gap-[20px] mb-[20px]">
           <Input
             type="text"
             placeholder="John Doe"
             defaultValue=""
-            className="h-[55px] bg-white rounded-[10px] border border-solid border-[#ebebeb] px-[10px] [font-family:'Darker_Grotesque',Helvetica] font-normal text-[#7c7c7c] text-[25px] tracking-[0] leading-[normal]"
+            className="w-full"
           />
 
           <Input
             type="email"
             placeholder="noname@gmail.com"
             defaultValue=""
-            className="h-[55px] bg-white rounded-[10px] border border-solid border-[#ebebeb] px-[10px] [font-family:'Darker_Grotesque',Helvetica] font-normal text-[#7c7c7c] text-[25px] tracking-[0] leading-[normal]"
+            className="w-full"
           />
 
           <div className="relative">
@@ -51,7 +46,7 @@ export const SignUp = (): JSX.Element => {
               type="password"
               placeholder="************"
               defaultValue=""
-              className="h-[55px] bg-white rounded-[10px] border border-solid border-[#ebebeb] px-[10px] pr-[45px] [font-family:'Darker_Grotesque',Helvetica] font-normal text-[#7c7c7c] text-[25px] tracking-[0] leading-[normal]"
+              className="w-full"
             />
             <Button
               variant="ghost"
@@ -63,37 +58,12 @@ export const SignUp = (): JSX.Element => {
           </div>
         </div>
 
-        <Button className="w-full h-[55px] bg-[#58419f] hover:bg-[#58419f]/90 rounded-[10px] [font-family:'Darker_Grotesque',Helvetica] font-bold text-white text-[25px] tracking-[0] leading-[normal] mb-[30px]">
+        <Button className="w-full" size="lg">
           Create Account
         </Button>
 
-        {/* <div className="flex items-center gap-[15px] mb-[27px]">
-          <div className="flex-1 h-px bg-[#d9d9d9]" />
-          <span className="[font-family:'Darker_Grotesque',Helvetica] font-normal text-[#444444] text-[25px] tracking-[0] leading-[normal]">
-            or
-          </span>
-          <div className="flex-1 h-px bg-[#d9d9d9]" />
-        </div>
-
-        <div className="flex justify-center gap-[65px] mb-[31px]">
-          <Button variant="ghost" size="icon" className="w-[55px] h-[55px] p-0">
-            <img
-              className="w-[55px] h-[55px]"
-              alt="Google original"
-              src="/google---original.png"
-            />
-          </Button>
-          <Button variant="ghost" size="icon" className="w-[55px] h-[55px] p-0">
-            <img
-              className="w-[55px] h-[55px]"
-              alt="Facebook original"
-              src="/facebook---original.svg"
-            />
-          </Button>
-        </div> */}
-
-        <p className="[font-family:'Darker_Grotesque',Helvetica] font-bold text-[#212529] text-[22px] tracking-[0] leading-[normal] text-center">
-          Already have an account? <button onClick={() => navigate("/")} className="text-[#58419f] hover:underline">Log in here.</button>
+        <p className="mt-4 font-bold mx-auto">
+          Already have an account? <button onClick={() => navigate("/")} className="text-primary hover:underline">Log in here.</button>
         </p>
       </main>
     </div>
