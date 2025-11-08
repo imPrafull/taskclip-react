@@ -1,5 +1,7 @@
 import { ChevronRightIcon, SettingsIcon, LogOutIcon, XIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { authService } from "../../lib/authService";
 import { Button } from "../ui/button";
 import { TaskList, Tag } from "../../data/dummyTasks";
 
@@ -21,6 +23,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   tags,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/", { replace: true });
+  };
 
   return (
     <>
@@ -172,6 +180,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Button
             variant="ghost"
             className="w-full !justify-start gap-3 text-gray-700 hover:text-gray-900"
+            onClick={handleLogout}
           >
             <LogOutIcon className="w-5 h-5" />
             Sign out
