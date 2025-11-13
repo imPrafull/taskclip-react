@@ -183,17 +183,19 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
         </div>
       </div>
 
-      <div className="border-t border-gray-100 p-6 flex gap-3">
+      <div className="w-full p-6 flex gap-3 max-w-lg mx-auto">
         <Button
           onClick={onClose}
           variant="outline"
+          size="lg"
           className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50"
         >
           Cancel
         </Button>
         <Button
           onClick={handleSave}
-          className="flex-1 bg-[#58419f] hover:bg-[#58419f]/90 text-white font-bold"
+          size="lg"
+          className="flex-1"
         >
           {mode === "create" ? "Create Task" : "Save Changes"}
         </Button>

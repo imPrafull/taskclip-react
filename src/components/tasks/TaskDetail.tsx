@@ -109,19 +109,20 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
         )}
       </div>
 
-      <div className="border-t border-gray-100 p-6 flex gap-3">
+      <div className="w-full p-6 flex gap-3 max-w-lg mx-auto">
         <Button
           onClick={() => onDelete(task.id)}
           variant="outline"
+          size="lg"
           className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50"
         >
-          Delete Task
+          Delete
         </Button>
         <Button
           onClick={() => onEdit(task)}
-          className="flex-1 bg-[#58419f] hover:bg-[#58419f]/90 text-white font-bold flex items-center justify-center gap-2"
+          size="lg"
+          className="flex-1 flex items-center justify-center gap-2"
         >
-          <EditIcon className="w-4 h-4" />
           Edit
         </Button>
       </div>
