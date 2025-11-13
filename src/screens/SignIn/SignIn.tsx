@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, EyeOffIcon } from "lucide-react";
+import { ChevronLeftIcon, EyeOffIcon, EyeIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../lib/authService";
@@ -9,6 +9,7 @@ export const SignIn = (): JSX.Element => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +44,7 @@ export const SignIn = (): JSX.Element => {
           size="icon"
           className="w-10 h-10 mb-[19px] -ml-2 self-start"
         >
-          <ChevronLeftIcon className="w-6 h-6 text-[#212529]" />
+          <ChevronLeftIcon className="w-6 h-6 text-foreground" />
         </Button>
 
         <div className="flex justify-center mb-[49px]">
@@ -71,7 +72,7 @@ export const SignIn = (): JSX.Element => {
 
           <div className="relative">
             <Input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="************"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -83,8 +84,13 @@ export const SignIn = (): JSX.Element => {
               variant="ghost"
               size="icon"
               className="absolute right-[10px] top-1/2 -translate-y-1/2 w-8 h-8"
+              onClick={() => setShowPassword(!showPassword)}
             >
-              <EyeOffIcon className="w-[17px] h-[17px] text-[#7c7c7c]" />
+              {showPassword ? (
+                <EyeIcon className="w-4 h-4 text-muted-foreground" />
+              ) : (
+                <EyeOffIcon className="w-4 h-4 text-muted-foreground" />
+              )}
             </Button>
           </div>
         </div>
