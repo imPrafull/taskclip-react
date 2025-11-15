@@ -1,34 +1,6 @@
-type User = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-type AuthResponse = {
-  success: boolean;
-  user?: User;
-  error?: string;
-};
-
-type ApiUser = {
-  _id: string;
-  id: string;
-  name: string;
-  email: string;
-  age: number;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-};
-
-type AuthApiResponse = {
-  user: ApiUser;
-  token: string;
-};
-
-const USER = "user";
-const TOKEN = "token";
-const API_BASE_URL = "http://localhost:3000";
+import { AuthApiResponse, AuthResponse, User } from "../models/auth";
+import { storageService, USER_KEY, TOKEN_KEY } from "./storageService";
+import { apiService } from "./apiService";
 
 export const authService = {
   signUp: async (name: string, email: string, password: string): Promise<AuthResponse> => {
@@ -40,24 +12,17 @@ export const authService = {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const data = await apiService.apiFetch<AuthApiResponse>("/users", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
 
-      const data: AuthApiResponse = await response.json();
-
-      if (!response.ok) {
-        return { success: false, error: (data as any).message || "Sign-up failed" };
-      }
-
       const user: User = { id: data.user.id, name: data.user.name, email: data.user.email };
-      localStorage.setItem(USER, JSON.stringify(user));
-      localStorage.setItem(TOKEN, data.token);
+      storageService.setItem(USER_KEY, JSON.stringify(user));
+      storageService.setItem(TOKEN_KEY, data.token);
       return { success: true, user };
     } catch (error) {
-      return { success: false, error: "An unexpected error occurred." };
+      return { success: false, error: (error as Error).message || "An unexpected error occurred." };
     }
   },
 
@@ -66,46 +31,35 @@ export const authService = {
       return { success: false, error: "Email and password are required" };
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/users/login`, {
+      const data = await apiService.apiFetch<AuthApiResponse>("/users/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data: AuthApiResponse = await response.json();
-      if (!response.ok) {
-        return { success: false, error: (data as any).message || "Invalid email or password" };
-      }
       const user: User = { id: data.user.id, name: data.user.name, email: data.user.email };
-      localStorage.setItem(USER, JSON.stringify(user));
-      localStorage.setItem(TOKEN, data.token);
+      storageService.setItem(USER_KEY, JSON.stringify(user));
+      storageService.setItem(TOKEN_KEY, data.token);
       return { success: true, user };
     } catch (error) {
-      return { success: false, error: "An unexpected error occurred." };
+      return { success: false, error: (error as Error).message || "An unexpected error occurred." };
     }
   },
 
   logout: async () => {
-    const token = authService.getToken();
-    localStorage.removeItem(USER);
-    localStorage.removeItem(TOKEN);
+    const token = apiService.getToken();
     if (token) {
       try {
-        await fetch(`${API_BASE_URL}/users/logout`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        // We don't need to await this or handle its response for the user's logout flow.
+        apiService.apiFetch("/users/logout", { method: "POST" });
+        storageService.removeItem(USER_KEY);
+        storageService.removeItem(TOKEN_KEY);
       } catch (error) {
         console.error("Logout API call failed:", error);
       }
     }
-    
   },
 
   getCurrentUser: (): User | null => {
-    const userJson = localStorage.getItem(USER);
+    const userJson = storageService.getItem(USER_KEY);
     if (!userJson) return null;
     try {
       return JSON.parse(userJson);
@@ -118,7 +72,4 @@ export const authService = {
     return !!authService.getCurrentUser();
   },
 
-  getToken: (): string | null => {
-    return localStorage.getItem(TOKEN);
-  },
 };

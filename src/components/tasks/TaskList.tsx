@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from "lucide-react";
 import React from "react";
-import { TaskItem } from "../../data/dummyTasks";
+import { TaskItem } from "../../models/task";
 
 type TaskListProps = {
   tasks: TaskItem[];
@@ -37,7 +37,7 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, selectedTaskId, onTas
             />
             <div className="flex-1 min-w-0">
               <p className="text-gray-900 font-medium truncate">{task.title}</p>
-              {task.subtasks.length > 0 && (
+              {task.subtasks && task.subtasks.length > 0 && (
                 <p className="text-sm text-gray-500">
                   {task.subtasks.filter((s) => s.completed).length} Subtasks
                 </p>

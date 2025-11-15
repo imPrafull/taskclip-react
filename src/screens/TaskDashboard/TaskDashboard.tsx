@@ -1,16 +1,24 @@
 import { MenuIcon, PlusIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TaskDetail } from "../../components/tasks/TaskDetail";
 import { TaskForm } from "../../components/tasks/TaskForm";
 import { TaskList } from "../../components/tasks/TaskList";
 import { Sidebar } from "../../components/tasks/Sidebar";
 import { Button } from "../../components/ui/button";
-import { dummyTasks, dummyLists, dummyTags, TaskItem } from "../../data/dummyTasks";
+import { dummyLists, dummyTags } from "../../data/dummyTasks";
+import { TaskItem } from "../../models/task";
+import { useFetch } from "../../hooks/useFetch";
+import { createTask, fetchTasks as fetchTasksApi } from "./taskService";
 
 export const TaskDashboard = (): JSX.Element => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [tasks, setTasks] = useState<TaskItem[]>(dummyTasks);
-  const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>(dummyTasks);
+  const {
+    isFetching: isLoading,
+    error,
+    fetchedData: tasks,
+    setFetchedData: setTasks,
+  } = useFetch(fetchTasksApi, []);
+  const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [selectedListId, setSelectedListId] = useState<string | null>("today");
   const [isMobile, setIsMobile] = useState(false);
@@ -29,18 +37,18 @@ export const TaskDashboard = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    filterTasks();
+    const filterTasks = () => {
+      let filtered = [...tasks];
+
+      if (selectedListId && selectedListId !== "today") {
+        filtered = filtered.filter((task) => task.listId === selectedListId);
+      }
+
+      setFilteredTasks(filtered);
+    };
+
+    filterTasks()
   }, [tasks, selectedListId]);
-
-  const filterTasks = () => {
-    let filtered = [...tasks];
-
-    if (selectedListId && selectedListId !== "today") {
-      filtered = filtered.filter((task) => task.listId === selectedListId);
-    }
-
-    setFilteredTasks(filtered);
-  };
 
   const handleTaskSelect = (taskId: string) => {
     setSelectedTaskId(taskId);
@@ -81,23 +89,17 @@ export const TaskDashboard = (): JSX.Element => {
     }
   };
 
-  const handleSaveTask = (taskData: Partial<TaskItem>) => {
+  const handleSaveTask = async (taskData: Partial<TaskItem>) => {
     if (formMode === "create") {
-      const newTask: TaskItem = {
-        id: Date.now().toString(),
-        title: taskData.title!,
-        description: taskData.description!,
-        listId: taskData.listId!,
-        listName: taskData.listName!,
-        listColor: taskData.listColor!,
-        dueDate: taskData.dueDate || "",
-        subtasks: taskData.subtasks || [],
-        tags: taskData.tags || [],
-        completed: false,
-      };
-      setTasks([...tasks, newTask]);
-      setSelectedTaskId(newTask.id);
-      setViewMode("detail");
+      try {
+        const newTask = await createTask(taskData);
+        setTasks((prevTasks) => [...prevTasks, newTask]);
+        setSelectedTaskId(newTask.id);
+        setViewMode("detail");
+      } catch (error) {
+        console.error("Failed to create task:", error);
+        // Optionally, show an error message to the user
+      }
     } else if (formMode === "edit" && editingTask) {
       setTasks(
         tasks.map((task) =>
@@ -186,6 +188,18 @@ export const TaskDashboard = (): JSX.Element => {
             <span className="text-2xl font-bold text-gray-400">{filteredTasks.length}</span>
           </div>
 
+          {isLoading && (
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-gray-500">Loading tasks...</p>
+            </div>
+          )}
+          {error && (
+            <div className="flex-1 flex items-center justify-center p-4">
+              <p className="text-red-500">Error: {error.message}</p>
+            </div>
+          )}
+
+          {!isLoading && !error && (
           <div className="flex-1 overflow-y-auto">
             <button
               onClick={handleAddNewTask}
@@ -200,6 +214,7 @@ export const TaskDashboard = (): JSX.Element => {
               onTaskSelect={handleTaskSelect}
             />
           </div>
+          )}
         </div>
       )}
 

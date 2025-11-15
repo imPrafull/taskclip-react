@@ -1,6 +1,6 @@
-import { ArrowLeftIcon, EditIcon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, XIcon } from "lucide-react";
 import React from "react";
-import { TaskItem } from "../../data/dummyTasks";
+import { TaskItem } from "../../models/task";
 import { Button } from "../ui/button";
 
 type TaskDetailProps = {
@@ -67,11 +67,11 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
           </div>
         </div>
 
-        {task.tags.length > 0 && (
+        {task.tags && task.tags.length > 0 && (
           <div className="space-y-3">
             <h4 className="text-sm font-medium text-gray-600">Tags</h4>
             <div className="flex gap-2 flex-wrap">
-              {task.tags.map((tag) => (
+              {task.tags && task.tags.map((tag) => (
                 <span
                   key={tag.id}
                   className={`px-3 py-1 rounded-full text-sm font-medium ${tag.color}`}
@@ -83,7 +83,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
           </div>
         )}
 
-        {task.subtasks.length > 0 && (
+        {task.subtasks && task.subtasks.length > 0 && (
           <div className="border-t border-gray-100 pt-6 space-y-3">
             <h4 className="text-lg font-bold text-gray-900">Subtasks:</h4>
             <div className="space-y-2">

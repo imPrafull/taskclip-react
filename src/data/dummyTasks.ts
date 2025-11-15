@@ -1,36 +1,6 @@
-export type Subtask = {
-  id: string;
-  title: string;
-  completed: boolean;
-};
+import { TaskItem, TaskListInfo, Tag } from "../models/task";
 
-export type Tag = {
-  id: string;
-  name: string;
-  color: string;
-};
-
-export type TaskList = {
-  id: string;
-  name: string;
-  color: string;
-  count: number;
-};
-
-export type TaskItem = {
-  id: string;
-  title: string;
-  description: string;
-  dueDate: string;
-  listId: string;
-  listName: string;
-  listColor: string;
-  subtasks: Subtask[];
-  tags: Tag[];
-  completed: boolean;
-};
-
-export const dummyLists: TaskList[] = [
+export const dummyLists: TaskListInfo[] = [
   { id: "personal", name: "Personal", color: "bg-red-400", count: 3 },
   { id: "work", name: "Work", color: "bg-cyan-400", count: 6 },
   { id: "list1", name: "List 1", color: "bg-yellow-400", count: 3 },
