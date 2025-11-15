@@ -67,11 +67,17 @@ export const TaskDashboard = (): JSX.Element => {
   };
 
   const handleCloseDetail = () => {
-    setViewMode("list");
-    setSelectedTaskId(null);
-    setEditingTask(null);
-    if (isMobile) {
-      setShowDetail(false);
+    if (formMode === "edit" && editingTask) {
+      setViewMode("detail");
+      setSelectedTaskId(editingTask.id);
+      setEditingTask(null);
+    } else {
+      setViewMode("list");
+      setSelectedTaskId(null);
+      setEditingTask(null);
+      if (isMobile) {
+        setShowDetail(false);
+      }
     }
   };
 
