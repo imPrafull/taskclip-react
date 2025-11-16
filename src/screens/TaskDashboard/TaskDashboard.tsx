@@ -123,8 +123,8 @@ export const TaskDashboard = (): JSX.Element => {
 
   const selectedTask = tasks.find((task) => task.id === selectedTaskId) || null;
 
+  const shouldShowRightPanel = (viewMode !== "list" && !isMobile) || (isMobile && showDetail);
   const shouldShowTaskList = !isMobile || !showDetail;
-  const shouldShowRightPanel = !isMobile || showDetail;
 
   const renderRightPanel = () => {
     if (viewMode === "form") {
@@ -174,8 +174,8 @@ export const TaskDashboard = (): JSX.Element => {
       />
 
       {shouldShowTaskList && (
-        <div className="flex-1 flex flex-col min-w-0 border-r border-gray-200">
-          <div className="flex items-center gap-4 p-6 border-b border-gray-200">
+        <div className={`flex-1 flex flex-col min-w-0`}>
+          <div className="flex items-center gap-4 p-6">
             <Button
               variant="ghost"
               size="icon"
@@ -203,7 +203,7 @@ export const TaskDashboard = (): JSX.Element => {
           <div className="flex-1 overflow-y-auto">
             <button
               onClick={handleAddNewTask}
-              className="w-full flex items-center gap-2 p-6 text-gray-600 hover:text-gray-900 transition-colors border-b border-gray-200"
+              className="w-full flex items-center gap-2 p-6 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <PlusIcon className="w-5 h-5" />
               <span className="font-medium">Add New Task</span>
@@ -219,8 +219,10 @@ export const TaskDashboard = (): JSX.Element => {
       )}
 
       {shouldShowRightPanel && (
-        <div className={`${isMobile ? "fixed inset-0 z-50" : "flex-1 min-w-0"} bg-white`}>
-          {renderRightPanel()}
+        <div className={`${isMobile ? "fixed inset-0 z-50 bg-white" : "flex-1 min-w-0 pt-16"}`}>
+          <div className={`${isMobile ? 'h-full' : 'h-auto rounded-xl bg-muted overflow-hidden'}`}>
+            {renderRightPanel()}
+          </div>
         </div>
       )}
     </div>

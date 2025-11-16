@@ -25,7 +25,7 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, selectedTaskId, onTas
           onClick={() => onTaskSelect(task.id)}
           className={`
             w-full text-left p-4 hover:bg-gray-50 transition-colors flex items-center justify-between
-            ${selectedTaskId === task.id ? "bg-purple-50" : ""}
+            ${selectedTaskId === task.id ? "bg-muted" : ""}
           `}
         >
           <div className="flex items-center gap-3 flex-1 min-w-0">

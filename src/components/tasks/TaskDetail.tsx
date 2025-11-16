@@ -22,8 +22,8 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
-      <div className="flex items-center justify-between p-6 border-b border-gray-100">
+    <div className="flex flex-col">
+      <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (
             <Button variant="ghost" size="icon" onClick={onClose}>

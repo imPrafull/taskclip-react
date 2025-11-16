@@ -64,7 +64,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   };
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col">
       <div className="flex items-center justify-between p-6 border-b border-gray-100">
         <div className="flex items-center gap-3">
           {isMobile && (

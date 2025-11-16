@@ -3,14 +3,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../lib/authService";
 import { Button } from "../ui/button";
-import { TaskList, Tag } from "../../data/dummyTasks";
+import { Tag, TaskListInfo } from "../../models/task";
 
 type SidebarProps = {
   isOpen: boolean;
   onClose: () => void;
   selectedListId: string | null;
   onListSelect: (listId: string) => void;
-  lists: TaskList[];
+  lists: TaskListInfo[];
   tags: Tag[];
 };
 
@@ -78,7 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               TASKS
             </h3>
             <nav className="space-y-2">
-              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center gap-2">
                   <ChevronRightIcon className="w-5 h-5 text-gray-400" />
                   <span className="font-medium">Upcoming</span>
@@ -89,8 +89,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => onListSelect("today")}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
                   selectedListId === "today"
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "bg-muted text-gray-900"
+                    : "text-gray-700 hover:bg-gray-50"
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -99,13 +99,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 <span className="text-sm text-gray-500 font-medium">5</span>
               </button>
-              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 flex items-center justify-center">📅</div>
                   <span className="font-medium">Calendar</span>
                 </div>
               </button>
-              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 flex items-center justify-center">📌</div>
                   <span className="font-medium">Sticky Wall</span>
@@ -135,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => onListSelect(list.id)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
                     selectedListId === list.id
-                      ? "bg-gray-100"
+                      ? "bg-gray-50"
                       : "hover:bg-gray-50"
                   }`}
                 >
