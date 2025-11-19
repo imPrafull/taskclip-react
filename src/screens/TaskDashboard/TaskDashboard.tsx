@@ -1,31 +1,39 @@
 import { MenuIcon, PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import { TaskDetail } from "../../components/tasks/TaskDetail";
 import { TaskForm } from "../../components/tasks/TaskForm";
 import { TaskList } from "../../components/tasks/TaskList";
 import { Sidebar } from "../../components/tasks/Sidebar";
 import { Button } from "../../components/ui/button";
-import { dummyLists, dummyTags } from "../../data/dummyTasks";
-import { TaskItem } from "../../models/task";
-import { useFetch } from "../../hooks/useFetch";
-import { createTask, fetchTasks as fetchTasksApi } from "./taskService";
+import { TaskItem, TaskListInfo } from "../../models/task";
+import { RootState, AppDispatch } from '../../store/store';
+import { fetchTasks, addNewTask, updateTask, deleteTask } from '../../store/slices/tasksSlice';
+import { fetchLists, addNewList, selectList } from '../../store/slices/listsSlice';
 
 export const TaskDashboard = (): JSX.Element => {
+  const dispatch: AppDispatch = useDispatch();
+  const { tasks, status: taskStatus, error: taskError } = useSelector((state: RootState) => state.tasks);
+  const { lists, selectedListId, status: listStatus, error: listError } = useSelector((state: RootState) => state.lists);
+  const { tags } = useSelector((state: RootState) => state.tags);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const {
-    isFetching: isLoading,
-    error,
-    fetchedData: tasks,
-    setFetchedData: setTasks,
-  } = useFetch(fetchTasksApi, []);
   const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [selectedListId, setSelectedListId] = useState<string | null>("today");
   const [isMobile, setIsMobile] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "detail" | "form">("list");
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [editingTask, setEditingTask] = useState<TaskItem | null>(null);
+
+  useEffect(() => {
+    if (taskStatus === 'idle') {
+      dispatch(fetchTasks());
+    }
+    if (listStatus === 'idle') {
+      dispatch(fetchLists());
+    }
+  }, [taskStatus, listStatus, dispatch]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -91,21 +99,14 @@ export const TaskDashboard = (): JSX.Element => {
 
   const handleSaveTask = async (taskData: Partial<TaskItem>) => {
     if (formMode === "create") {
-      try {
-        const newTask = await createTask(taskData);
-        setTasks((prevTasks) => [...prevTasks, newTask]);
-        setSelectedTaskId(newTask.id);
-        setViewMode("detail");
-      } catch (error) {
-        console.error("Failed to create task:", error);
-        // Optionally, show an error message to the user
-      }
+        const newTaskPayload = {
+          ...taskData,
+          listId: selectedListId === 'today' ? null : selectedListId,
+        };
+        dispatch(addNewTask(newTaskPayload as Omit<TaskItem, 'id'>));
+        setViewMode("list");
     } else if (formMode === "edit" && editingTask) {
-      setTasks(
-        tasks.map((task) =>
-          task.id === editingTask.id ? { ...task, ...taskData } : task
-        )
-      );
+      dispatch(updateTask({ ...editingTask, ...taskData }));
       setSelectedTaskId(editingTask.id);
       setViewMode("detail");
     }
@@ -113,12 +114,17 @@ export const TaskDashboard = (): JSX.Element => {
   };
 
   const handleDeleteTask = (taskId: string) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+    dispatch(deleteTask(taskId));
     setSelectedTaskId(null);
     setViewMode("list");
     if (isMobile) {
       setShowDetail(false);
     }
+  };
+
+  const handleListCreated = (newListInfo: Omit<TaskListInfo, 'id'>) => {
+    dispatch(addNewList(newListInfo));
+    setSidebarOpen(false);
   };
 
   const selectedTask = tasks.find((task) => task.id === selectedTaskId) || null;
@@ -166,11 +172,12 @@ export const TaskDashboard = (): JSX.Element => {
         onClose={() => setSidebarOpen(false)}
         selectedListId={selectedListId}
         onListSelect={(listId) => {
-          setSelectedListId(listId);
+          dispatch(selectList(listId));
           setSidebarOpen(false);
         }}
-        lists={dummyLists}
-        tags={dummyTags}
+        lists={lists}
+        onListCreated={handleListCreated}
+        tags={tags}
       />
 
       {shouldShowTaskList && (
@@ -186,34 +193,34 @@ export const TaskDashboard = (): JSX.Element => {
             </Button>
             <h1 className="text-2xl font-bold text-gray-900">Today</h1>
             <span className="text-2xl font-bold text-gray-400">{filteredTasks.length}</span>
-          </div>
+.          </div>
 
-          {isLoading && (
+          {(taskStatus === 'loading' || listStatus === 'loading') && (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-500">Loading tasks...</p>
+              <p className="text-gray-500">Loading...</p>
             </div>
           )}
-          {error && (
+          {(taskError || listError) && (
             <div className="flex-1 flex items-center justify-center p-4">
-              <p className="text-red-500">Error: {error.message}</p>
+              <p className="text-red-500">Error: {taskError || listError}</p>
             </div>
           )}
 
-          {!isLoading && !error && (
-          <div className="flex-1 overflow-y-auto">
-            <button
-              onClick={handleAddNewTask}
-              className="w-full flex items-center gap-2 p-6 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <PlusIcon className="w-5 h-5" />
-              <span className="font-medium">Add New Task</span>
-            </button>
-            <TaskList
-              tasks={filteredTasks}
-              selectedTaskId={selectedTaskId}
-              onTaskSelect={handleTaskSelect}
-            />
-          </div>
+          {(taskStatus === 'succeeded' && listStatus === 'succeeded') && (
+            <div className="flex-1 overflow-y-auto">
+              <button
+                onClick={handleAddNewTask}
+                className="w-full flex items-center gap-2 p-6 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <PlusIcon className="w-5 h-5" />
+                <span className="font-medium">Add New Task</span>
+              </button>
+              <TaskList
+                tasks={filteredTasks}
+                selectedTaskId={selectedTaskId}
+                onTaskSelect={handleTaskSelect}
+              />
+            </div>
           )}
         </div>
       )}

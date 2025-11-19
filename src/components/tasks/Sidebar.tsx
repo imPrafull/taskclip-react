@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "../../lib/authService";
 import { Button } from "../ui/button";
 import { Tag, TaskListInfo } from "../../models/task";
+import { AddListModal } from "./AddListModal";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -11,6 +12,7 @@ type SidebarProps = {
   selectedListId: string | null;
   onListSelect: (listId: string) => void;
   lists: TaskListInfo[];
+  onListCreated: (newList: TaskListInfo) => void;
   tags: Tag[];
 };
 
@@ -20,9 +22,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   selectedListId,
   onListSelect,
   lists,
+  onListCreated,
   tags,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAddListModalOpen, setAddListModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -30,8 +34,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     navigate("/", { replace: true });
   };
 
+  const handleListCreated = (newList: TaskListInfo) => {
+    onListCreated(newList);
+    onClose(); // Close sidebar on mobile after creation
+  };
+
   return (
     <>
+      <AddListModal isOpen={isAddListModalOpen} onClose={() => setAddListModalOpen(false)} onListCreated={handleListCreated} />
+
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -122,7 +133,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-0 h-auto text-gray-400 hover:text-gray-600"
+                className="p-2 h-auto text-gray-400 hover:text-gray-600"
+                onClick={() => setAddListModalOpen(true)}
               >
                 <PlusIcon className="w-4 h-4" />
               </Button>
@@ -140,7 +152,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-sm ${list.color}`} />
+                    <div
+                      className="w-3 h-3 rounded-sm"
+                      style={{ backgroundColor: list.color }}
+                    />
                     <span className="font-medium text-gray-700">{list.name}</span>
                   </div>
                   <span className="text-sm text-gray-500 font-medium">{list.count}</span>

@@ -34,7 +34,7 @@ export const apiService = {
       });
     
       const data = await response.json();
-    
+      
       if (!response.ok) {
         // Use the error message from the API response if available, otherwise a generic message.
         throw new Error((data as any)?.message || `HTTP error! status: ${response.status}`);

@@ -1,0 +1,60 @@
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { TaskListInfo } from '../../models/task';
+import { apiService } from '../../lib/apiService';
+
+interface ListsState {
+  lists: TaskListInfo[];
+  selectedListId: string | null;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
+}
+
+const initialState: ListsState = {
+  lists: [],
+  selectedListId: 'today',
+  status: 'idle',
+  error: null,
+};
+
+export const fetchLists = createAsyncThunk('lists/fetchLists', async () => {
+  const response = await apiService.apiFetch<TaskListInfo[]>('/lists');
+  return response;
+});
+
+export const addNewList = createAsyncThunk('lists/addNewList', async (newList: Omit<TaskListInfo, 'id'>) => {
+  const response = await apiService.apiFetch<TaskListInfo>('/lists', {
+    method: 'POST',
+    body: JSON.stringify(newList),
+  });
+  return response;
+});
+
+const listsSlice = createSlice({
+  name: 'lists',
+  initialState,
+  reducers: {
+    selectList: (state, action: PayloadAction<string>) => {
+      state.selectedListId = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchLists.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchLists.fulfilled, (state, action: PayloadAction<TaskListInfo[]>) => {
+        state.status = 'succeeded';
+        state.lists = action.payload;
+      })
+      .addCase(fetchLists.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || null;
+      })
+      .addCase(addNewList.fulfilled, (state, action: PayloadAction<TaskListInfo>) => {
+        state.lists.push(action.payload);
+      });
+  },
+});
+
+export const { selectList } = listsSlice.actions;
+export default listsSlice.reducer;
