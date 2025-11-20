@@ -2,9 +2,11 @@ import { ChevronRightIcon, SettingsIcon, LogOutIcon, XIcon, PlusIcon } from "luc
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../lib/authService";
-import { Button } from "../ui/button";
-import { Tag, TaskListInfo } from "../../models/task";
+import { Button } from "../ui/Button";
+import { Tag as TagType, TaskListInfo } from "../../models/task";
 import { AddListModal } from "./AddListModal";
+import { AddTagModal } from "./AddTagModal";
+import Tag from "../ui/Tag";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -13,7 +15,7 @@ type SidebarProps = {
   onListSelect: (listId: string) => void;
   lists: TaskListInfo[];
   onListCreated: (newList: TaskListInfo) => void;
-  tags: Tag[];
+  tags: TagType[];
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -25,8 +27,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onListCreated,
   tags,
 }) => {
+  const taskNavItems = [
+    { id: 'upcoming', icon: <ChevronRightIcon className="w-5 h-5 text-gray-400" />, name: 'Upcoming', count: 12 },
+    { id: 'today', icon: <div className="w-5 h-5 flex items-center justify-center">≡</div>, name: 'Today', count: 5 },
+    { id: 'calendar', icon: <div className="w-5 h-5 flex items-center justify-center">📅</div>, name: 'Calendar' },
+    { id: 'sticky', icon: <div className="w-5 h-5 flex items-center justify-center">📌</div>, name: 'Sticky Wall' },
+  ];
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddListModalOpen, setAddListModalOpen] = useState(false);
+  const [isAddTagModalOpen, setAddTagModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -42,6 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       <AddListModal isOpen={isAddListModalOpen} onClose={() => setAddListModalOpen(false)} onListCreated={handleListCreated} />
+      <AddTagModal isOpen={isAddTagModalOpen} onClose={() => setAddTagModalOpen(false)} />
 
       {isOpen && (
         <div
@@ -89,39 +100,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
               TASKS
             </h3>
             <nav className="space-y-2">
-              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                <div className="flex items-center gap-2">
-                  <ChevronRightIcon className="w-5 h-5 text-gray-400" />
-                  <span className="font-medium">Upcoming</span>
-                </div>
-                <span className="text-sm text-gray-500 font-medium">12</span>
-              </button>
-              <button
-                onClick={() => onListSelect("today")}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
-                  selectedListId === "today"
-                    ? "bg-muted text-gray-900"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 flex items-center justify-center">≡</div>
-                  <span className="font-medium">Today</span>
-                </div>
-                <span className="text-sm text-gray-500 font-medium">5</span>
-              </button>
-              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 flex items-center justify-center">📅</div>
-                  <span className="font-medium">Calendar</span>
-                </div>
-              </button>
-              <button className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 flex items-center justify-center">📌</div>
-                  <span className="font-medium">Sticky Wall</span>
-                </div>
-              </button>
+              {taskNavItems.map(item => (
+                <button
+                  key={item.id}
+                  onClick={item.id === 'today' ? () => onListSelect("today") : undefined}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
+                    selectedListId === item.id
+                      ? "bg-muted text-gray-900"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
+                  disabled={item.id !== 'today'} // Disabling non-functional buttons for now
+                >
+                  <div className="flex items-center gap-2">
+                    {item.icon}
+                    <span className="font-medium">{item.name}</span>
+                  </div>
+                  {item.count && <span className="text-sm text-gray-500 font-medium">{item.count}</span>}
+                </button>
+              ))}
             </nav>
           </div>
 
@@ -165,21 +161,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           <div className="px-6 py-4 border-t border-gray-200">
-            <h3 className="text-xs font-bold text-gray-500 uppercase mb-3 tracking-wider">
-              TAGS
-            </h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                TAGS
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-2 h-auto text-gray-400 hover:text-gray-600"
+                onClick={() => setAddTagModalOpen(true)}
+              >
+                <PlusIcon className="w-4 h-4" />
+              </Button>
+            </div>
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
-                <button
-                  key={tag.id}
-                  className={`px-3 py-1 rounded-md text-sm font-medium ${tag.color} transition-colors hover:opacity-80`}
-                >
-                  {tag.name}
-                </button>
+                <Tag key={tag.id} tag={tag} />
               ))}
-              <button className="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">
-                + Add Tag
-              </button>
             </div>
           </div>
         </div>

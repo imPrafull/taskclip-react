@@ -2,8 +2,8 @@ import { ChevronLeftIcon, EyeOffIcon, EyeIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../lib/authService";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
 
 export const SignIn = (): JSX.Element => {
   const navigate = useNavigate();

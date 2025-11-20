@@ -1,7 +1,7 @@
 import { ArrowLeftIcon, XIcon } from "lucide-react";
 import React from "react";
 import { TaskItem } from "../../models/task";
-import { Button } from "../ui/button";
+import { Button } from "../ui/Button";
 
 type TaskDetailProps = {
   task: TaskItem | null;
@@ -44,23 +44,23 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
           <h3 className="text-2xl font-bold text-gray-900 mb-3">{task.title}</h3>
         </div>
 
-        <div className="space-y-3">
-          <h4 className="text-sm font-bold text-gray-500 uppercase">Description</h4>
-          <p className="text-gray-600">{task.description || "No description provided"}</p>
+        <div>
+          <h4 className="text-lg font-medium text-gray-500">Description</h4>
+          <p className="text-gray-800 mt-1">{task.description || "No description provided"}</p>
         </div>
 
-        <div className="space-y-3">
+        <div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h4 className="text-sm font-medium text-gray-600">List</h4>
+              <h4 className="text-lg font-medium text-gray-500">List</h4>
               <div className="flex items-center gap-2 mt-1">
                 <div className={`w-3 h-3 rounded-sm ${task.listColor}`} />
-                <span className="text-gray-900 font-medium text-sm">{task.listName}</span>
+                <span className="text-gray-800 font-medium">{task.listName}</span>
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-600">Due date</h4>
-              <p className="text-gray-900 font-medium text-sm mt-1">
+              <h4 className="text-lg font-medium text-gray-500">Due date</h4>
+              <p className="text-gray-800 font-medium mt-1">
                 {task.dueDate || "No due date"}
               </p>
             </div>
@@ -69,7 +69,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
 
         {task.tags && task.tags.length > 0 && (
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-gray-600">Tags</h4>
+            <h4 className="text-lg font-medium text-gray-500">Tags</h4>
             <div className="flex gap-2 flex-wrap">
               {task.tags && task.tags.map((tag) => (
                 <span
@@ -85,7 +85,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
 
         {task.subtasks && task.subtasks.length > 0 && (
           <div className="border-t border-gray-100 pt-6 space-y-3">
-            <h4 className="text-lg font-bold text-gray-900">Subtasks:</h4>
+            <h4 className="text-lg font-medium text-gray-500">Subtasks</h4>
             <div className="space-y-2">
               {task.subtasks.map((subtask) => (
                 <div key={subtask.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">

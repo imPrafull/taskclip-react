@@ -1,8 +1,8 @@
 import { ArrowLeftIcon, XIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 import { TaskItem } from "../../models/task";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "../ui/Button";
+import { Input } from "../ui/Input";
 
 type TaskFormProps = {
   task?: TaskItem | null;

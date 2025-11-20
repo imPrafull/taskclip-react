@@ -5,17 +5,18 @@ import { TaskDetail } from "../../components/tasks/TaskDetail";
 import { TaskForm } from "../../components/tasks/TaskForm";
 import { TaskList } from "../../components/tasks/TaskList";
 import { Sidebar } from "../../components/tasks/Sidebar";
-import { Button } from "../../components/ui/button";
+import { Button } from "../../components/ui/Button";
 import { TaskItem, TaskListInfo } from "../../models/task";
 import { RootState, AppDispatch } from '../../store/store';
 import { fetchTasks, addNewTask, updateTask, deleteTask } from '../../store/slices/tasksSlice';
 import { fetchLists, addNewList, selectList } from '../../store/slices/listsSlice';
+import { fetchTags } from "../../store/slices/tagsSlice";
 
 export const TaskDashboard = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { tasks, status: taskStatus, error: taskError } = useSelector((state: RootState) => state.tasks);
   const { lists, selectedListId, status: listStatus, error: listError } = useSelector((state: RootState) => state.lists);
-  const { tags } = useSelector((state: RootState) => state.tags);
+  const { tags, status: tagsStatus, error: tagsError } = useSelector((state: RootState) => state.tags);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
@@ -33,7 +34,10 @@ export const TaskDashboard = (): JSX.Element => {
     if (listStatus === 'idle') {
       dispatch(fetchLists());
     }
-  }, [taskStatus, listStatus, dispatch]);
+    if (tagsStatus === 'idle') {
+      dispatch(fetchTags());
+    }
+  }, [taskStatus, listStatus, tagsStatus, dispatch]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -195,18 +199,18 @@ export const TaskDashboard = (): JSX.Element => {
             <span className="text-2xl font-bold text-gray-400">{filteredTasks.length}</span>
 .          </div>
 
-          {(taskStatus === 'loading' || listStatus === 'loading') && (
+          {(taskStatus === 'loading' || listStatus === 'loading' || tagsStatus === 'loading') && (
             <div className="flex-1 flex items-center justify-center">
               <p className="text-gray-500">Loading...</p>
             </div>
           )}
-          {(taskError || listError) && (
+          {(taskError || listError || tagsError) && (
             <div className="flex-1 flex items-center justify-center p-4">
-              <p className="text-red-500">Error: {taskError || listError}</p>
+              <p className="text-red-500">Error: {taskError || listError || tagsError}</p>
             </div>
           )}
 
-          {(taskStatus === 'succeeded' && listStatus === 'succeeded') && (
+          {(taskStatus === 'succeeded' && listStatus === 'succeeded' && tagsStatus === 'succeeded') && (
             <div className="flex-1 overflow-y-auto">
               <button
                 onClick={handleAddNewTask}
