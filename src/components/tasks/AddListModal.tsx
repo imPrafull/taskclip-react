@@ -74,17 +74,17 @@ export const AddListModal: React.FC<AddListModalProps> = ({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-gray-900">Create New List</h3>
-          <Button variant="ghost" size="icon" onClick={onClose} className="text-gray-500">
+          <h3 className="text-lg font-medium text-foreground">Create New List</h3>
+          <Button variant="ghost" size="icon" onClick={onClose} className="text-foreground">
             <XIcon className="w-5 h-5" />
           </Button>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 mb-6">
             <Input type="text" placeholder="List Name" value={listName} onChange={(e) => setListName(e.target.value)} autoFocus className="h-10 text-base sm:text-base" />
-            <textarea placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full px-3 py-2 text-base text-gray-700 bg-transparent border border-input rounded-md shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-[80px]" />
+            <textarea placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full px-3 py-2 text-base text-foreground bg-transparent border border-border rounded-md shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-[80px]" />
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Color</label>
+              <label className="text-sm font-medium text-foreground mb-2 block">Color</label>
               <div className="flex flex-wrap gap-2">
                 {FIXED_COLORS.map(color => (
                   <button key={color} type="button" onClick={() => setSelectedColor(color)} className={`w-8 h-8 rounded-full transition-all ${selectedColor === color ? 'ring-2 ring-offset-2 ring-purple-500' : ''}`} style={{ backgroundColor: color }}>

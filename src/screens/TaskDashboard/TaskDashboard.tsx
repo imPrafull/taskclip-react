@@ -163,14 +163,14 @@ export const TaskDashboard = (): JSX.Element => {
     }
 
     return (
-      <div className="flex items-center justify-center h-full bg-gray-50">
-        <p className="text-gray-500 font-medium">Select a task to view details</p>
+      <div className="flex items-center justify-center h-full bg-background">
+        <p className="text-foreground font-medium">Select a task to view details</p>
       </div>
     );
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -195,13 +195,13 @@ export const TaskDashboard = (): JSX.Element => {
             >
               <MenuIcon className="w-6 h-6" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Today</h1>
-            <span className="text-2xl font-bold text-gray-400">{filteredTasks.length}</span>
+            <h1 className="text-2xl font-bold text-foreground">Today</h1>
+            <span className="text-2xl font-bold text-foreground">{filteredTasks.length}</span>
 .          </div>
 
           {(taskStatus === 'loading' || listStatus === 'loading' || tagsStatus === 'loading') && (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-500">Loading...</p>
+              <p className="text-foreground">Loading...</p>
             </div>
           )}
           {(taskError || listError || tagsError) && (
@@ -214,7 +214,7 @@ export const TaskDashboard = (): JSX.Element => {
             <div className="flex-1 overflow-y-auto">
               <button
                 onClick={handleAddNewTask}
-                className="w-full flex items-center gap-2 p-6 text-gray-600 hover:text-gray-900 transition-colors"
+                className="w-full flex items-center gap-2 p-6 text-foreground hover:text-foreground transition-colors"
               >
                 <PlusIcon className="w-5 h-5" />
                 <span className="font-medium">Add New Task</span>
@@ -230,7 +230,7 @@ export const TaskDashboard = (): JSX.Element => {
       )}
 
       {shouldShowRightPanel && (
-        <div className={`${isMobile ? "fixed inset-0 z-50 bg-white" : "flex-1 min-w-0 pt-16"}`}>
+        <div className={`${isMobile ? "fixed inset-0 z-50 bg-background" : "flex-1 min-w-0 pt-16"}`}>
           <div className={`${isMobile ? 'h-full' : 'h-auto rounded-xl bg-muted overflow-hidden'}`}>
             {renderRightPanel()}
           </div>

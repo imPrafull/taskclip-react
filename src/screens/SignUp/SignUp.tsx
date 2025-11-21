@@ -37,7 +37,7 @@ export const SignUp = (): JSX.Element => {
   };
 
   return (
-    <div className="bg-white w-full flex flex-col relative">
+    <div className="bg-background w-full flex flex-col relative">
       <main className="w-full flex-1 flex flex-col px-8 py-8 pt-8 max-w-md mx-auto">
         <form onSubmit={handleSignUp} className="w-full flex flex-col">
         <Button

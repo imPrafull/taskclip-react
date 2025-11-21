@@ -12,7 +12,7 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, selectedTaskId, onTas
   if (tasks.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500 font-medium">No tasks found</p>
+        <p className="text-foreground font-medium">No tasks found</p>
       </div>
     );
   }
@@ -24,8 +24,8 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, selectedTaskId, onTas
           key={task.id}
           onClick={() => onTaskSelect(task.id)}
           className={`
-            w-full text-left p-4 hover:bg-gray-50 transition-colors flex items-center justify-between
-            ${selectedTaskId === task.id ? "bg-muted" : ""}
+            w-full text-left p-4 transition-colors flex items-center justify-between
+            ${selectedTaskId === task.id ? "bg-muted hover:bg-muted" : "hover:bg-muted/50"}
           `}
         >
           <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -33,18 +33,18 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, selectedTaskId, onTas
               type="checkbox"
               checked={task.completed}
               onChange={(e) => e.stopPropagation()}
-              className="w-5 h-5 text-gray-300 cursor-pointer"
+              className="w-5 h-5 text-foreground cursor-pointer"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-gray-900 font-medium truncate">{task.title}</p>
+              <p className="text-foreground font-medium truncate">{task.title}</p>
               {task.subtasks && task.subtasks.length > 0 && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-foreground">
                   {task.subtasks.filter((s) => s.completed).length} Subtasks
                 </p>
               )}
             </div>
           </div>
-          <ChevronRightIcon className="w-5 h-5 text-gray-400 flex-shrink-0" />
+          <ChevronRightIcon className="w-5 h-5 text-foreground flex-shrink-0" />
         </button>
       ))}
     </div>

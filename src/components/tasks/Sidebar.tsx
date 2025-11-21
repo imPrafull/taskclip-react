@@ -28,7 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   tags,
 }) => {
   const taskNavItems = [
-    { id: 'upcoming', icon: <ChevronRightIcon className="w-5 h-5 text-gray-400" />, name: 'Upcoming', count: 12 },
+    { id: 'upcoming', icon: <ChevronRightIcon className="w-5 h-5 text-foreground" />, name: 'Upcoming', count: 12 },
     { id: 'today', icon: <div className="w-5 h-5 flex items-center justify-center">≡</div>, name: 'Today', count: 5 },
     { id: 'calendar', icon: <div className="w-5 h-5 flex items-center justify-center">📅</div>, name: 'Calendar' },
     { id: 'sticky', icon: <div className="w-5 h-5 flex items-center justify-center">📌</div>, name: 'Sticky Wall' },
@@ -64,15 +64,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-50
-          w-[280px] bg-white border-r border-gray-200
+          w-[280px] bg-background border-r border-border
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           overflow-y-auto flex flex-col h-screen
         `}
       >
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">Menu</h2>
+            <h2 className="text-2xl font-bold text-foreground">Menu</h2>
             <Button
               variant="ghost"
               size="icon"
@@ -89,14 +89,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 text-foreground bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           <div className="p-6">
-            <h3 className="text-xs font-bold text-gray-500 uppercase mb-3 tracking-wider">
+            <h3 className="text-xs font-bold text-muted-foreground uppercase mb-3 tracking-wider">
               TASKS
             </h3>
             <nav className="space-y-2">
@@ -106,8 +106,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={item.id === 'today' ? () => onListSelect("today") : undefined}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
                     selectedListId === item.id
-                      ? "bg-muted text-gray-900"
-                      : "text-gray-700 hover:bg-gray-50"
+                      ? "bg-accent text-accent-foreground"
+                      : "text-foreground hover:bg-muted"
                   }`}
                   disabled={item.id !== 'today'} // Disabling non-functional buttons for now
                 >
@@ -115,21 +115,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {item.icon}
                     <span className="font-medium">{item.name}</span>
                   </div>
-                  {item.count && <span className="text-sm text-gray-500 font-medium">{item.count}</span>}
+                  {item.count && <span className="text-sm text-muted-foreground font-medium">{item.count}</span>}
                 </button>
               ))}
             </nav>
           </div>
 
-          <div className="px-6 py-4 border-t border-gray-200">
+          <div className="px-6 py-4 border-t border-border">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 LISTS
               </h3>
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-2 h-auto text-gray-400 hover:text-gray-600"
+                className="p-2 h-auto text-foreground hover:text-foreground"
                 onClick={() => setAddListModalOpen(true)}
               >
                 <PlusIcon className="w-4 h-4" />
@@ -143,8 +143,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => onListSelect(list.id)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
                     selectedListId === list.id
-                      ? "bg-gray-50"
-                      : "hover:bg-gray-50"
+                      ? "bg-accent text-accent-foreground"
+                      : "text-foreground hover:bg-muted"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -152,23 +152,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       className="w-3 h-3 rounded-sm"
                       style={{ backgroundColor: list.color }}
                     />
-                    <span className="font-medium text-gray-700">{list.name}</span>
+                    <span className="font-medium">{list.name}</span>
                   </div>
-                  <span className="text-sm text-gray-500 font-medium">{list.count}</span>
+                  <span className="text-sm text-muted-foreground font-medium">{list.count}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="px-6 py-4 border-t border-gray-200">
+          <div className="px-6 py-4 border-t border-border">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 TAGS
               </h3>
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-2 h-auto text-gray-400 hover:text-gray-600"
+                className="p-2 h-auto text-foreground hover:text-foreground"
                 onClick={() => setAddTagModalOpen(true)}
               >
                 <PlusIcon className="w-4 h-4" />
@@ -182,17 +182,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        <div className="border-t border-gray-200 p-6 space-y-2">
+        <div className="border-t border-border p-6 space-y-2">
           <Button
             variant="ghost"
-            className="w-full !justify-start gap-3 text-gray-700 hover:text-gray-900"
+            className="w-full !justify-start gap-3 text-foreground"
           >
             <SettingsIcon className="w-5 h-5" />
             Settings
           </Button>
           <Button
             variant="ghost"
-            className="w-full !justify-start gap-3 text-gray-700 hover:text-gray-900"
+            className="w-full !justify-start gap-3 text-foreground"
             onClick={handleLogout}
           >
             <LogOutIcon className="w-5 h-5" />
