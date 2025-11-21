@@ -30,7 +30,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
               <ArrowLeftIcon className="w-5 h-5" />
             </Button>
           )}
-          <h2 className="text-xl font-bold text-foreground">Task:</h2>
+          <h3 className="text-xl font-bold text-foreground">Task</h3>
         </div>
         {!isMobile && (
           <Button variant="ghost" size="icon" onClick={onClose}>
@@ -39,33 +39,74 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-6">
         <div>
-          <h3 className="text-2xl font-bold text-foreground mb-3">{task.title}</h3>
+          <h2 className="text-4xl font-medium">{task.title}</h2>
         </div>
 
         <div>
-          <h4 className="text-lg font-medium text-foreground">Description</h4>
-          <p className="text-foreground mt-1">{task.description || "No description provided"}</p>
+          <h4 className="text-lg font-bold text-muted-foreground">Description</h4>
+          <p className="text-lg text-foreground mt-1">{task.description || "No description provided"}</p>
         </div>
 
-        <div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="text-lg font-medium text-foreground">List</h4>
-              <div className="flex items-center gap-2 mt-1">
-                <div className={`w-3 h-3 rounded-sm ${task.listColor}`} />
-                <span className="text-foreground font-medium">{task.listName}</span>
+        {/* <div className="flex items-center gap-4 mt-1">
+          <h4 className="text-base font-medium text-muted-foreground">List</h4>
+          <div className="flex items-center gap-2">
+            <div className={`w-3 h-3 rounded-sm ${task.listColor}`} />
+            <span className="text-lg text-foreground">List name</span>
+          </div>
+        </div> */}
+
+        <div className="flex w-full flex-col items-start">
+          <span className="text-lg font-bold text-muted-foreground mb-1">
+            Details
+          </span>
+          <div className="flex w-full flex-col items-start">
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-20 flex-none items-center gap-2">
+                <span className="text-lg text-muted-foreground">
+                  List
+                </span>
+              </div>
+              <div className="flex grow shrink-0 basis-0 items-center gap-2">
+                <span className="text-lg text-foreground">
+                  List name
+                </span>
               </div>
             </div>
-            <div>
-              <h4 className="text-lg font-medium text-foreground">Due date</h4>
-              <p className="text-foreground font-medium mt-1">
-                {task.dueDate || "No due date"}
-              </p>
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-20 flex-none items-center gap-2">
+                <span className="text-lg text-muted-foreground">
+                  Due date
+                </span>
+              </div>
+              <div className="flex grow shrink-0 basis-0 items-center gap-2">
+                <span className="text-lg text-foreground">
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "No due date"}
+                </span>
+              </div>
+            </div>
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-20 flex-none items-center gap-2">
+                <span className="text-lg text-muted-foreground">
+                  Status
+                </span>
+              </div>
+              <div className="flex grow shrink-0 basis-0 items-center gap-2">
+                <span className="text-lg text-foreground">
+                  { task.completed ? "Done" : "Todo" }
+                </span>
+              </div>
             </div>
           </div>
         </div>
+
 
         {task.tags && task.tags.length > 0 && (
           <div className="space-y-3">
