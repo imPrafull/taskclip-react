@@ -67,6 +67,7 @@ export const SignIn = (): JSX.Element => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full"
+            variant="secondary"
             required
           />
 
@@ -77,6 +78,7 @@ export const SignIn = (): JSX.Element => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full"
+              variant="secondary"
               required
             />
             <Button

@@ -1,13 +1,19 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+interface InputProps extends React.ComponentProps<"input"> {
+  variant?: "default" | "secondary";
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, variant = "default", ...props }, ref) => {
     return (
       <input
         type={type}
         className={cn(
-          "flex h-12 w-full rounded-md border border-border bg-transparent px-3 py-1 text-lg shadow-sm transition-colors file:border-0 file:bg-transparent file:text-lg file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 sm:text-xl",
+          "flex h-12 w-full rounded-md border px-3 py-1 transition-colors file:border-0 font-medium text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+          variant === "default" && "border-border bg-background text-base sm:text-lg shadow-sm",
+          variant === "secondary" && "border-border-dark bg-input text-lg sm:text-xl shadow-none",
           className,
         )}
         ref={ref}
@@ -18,4 +24,4 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
 );
 Input.displayName = "Input";
 
-export { Input };
+export { Input, type InputProps };

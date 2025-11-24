@@ -1,8 +1,12 @@
 import { ArrowLeftIcon, XIcon, PlusIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TaskItem } from "../../models/task";
 import { Button } from "../ui/Button";
+import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/Input";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { fetchLists } from "../../store/slices/listsSlice";
 
 type TaskFormProps = {
   task?: TaskItem | null;
@@ -13,12 +17,27 @@ type TaskFormProps = {
 };
 
 export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMobile, mode }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { lists, status } = useSelector((state: RootState) => state.lists);
+
   const [title, setTitle] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
-  const [listId, setListId] = useState(task?.listId || "personal");
+  const [listId, setListId] = useState(task?.listId || "");
   const [dueDate, setDueDate] = useState(task?.dueDate || "");
   const [subtasks, setSubtasks] = useState(task?.subtasks || []);
   const [newSubtask, setNewSubtask] = useState("");
+
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(fetchLists());
+    }
+  }, [status, dispatch]);
+
+  useEffect(() => {
+    if (!task?.listId && lists.length > 0) {
+      setListId(lists[0].id);
+    }
+  }, [lists, task?.listId]);
 
   const handleAddSubtask = () => {
     if (newSubtask.trim()) {
@@ -46,14 +65,16 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
       return;
     }
 
+    const selectedList = lists.find((list) => list.id === listId);
+
     const taskData: Partial<TaskItem> = {
       title,
       description,
       listId,
       dueDate,
       subtasks,
-      listName: listId === "personal" ? "Personal" : listId === "work" ? "Work" : "List 1",
-      listColor: listId === "personal" ? "bg-red-400" : listId === "work" ? "bg-cyan-400" : "bg-yellow-400",
+      listName: selectedList?.name,
+      listColor: selectedList?.color,
     };
 
     if (mode === "edit" && task) {
@@ -65,7 +86,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center justify-between p-6 border-b border-border-100">
+      <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (
             <Button variant="ghost" size="icon" onClick={onClose}>
@@ -83,56 +104,57 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        <div className="space-y-3">
-          <h4 className="text-sm font-bold text-foreground uppercase">Title</h4>
+      <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-6">
+        <div className="space-y-1">
+          <h4 className="text-base sm:text-lg font-bold text-muted-foreground">Title</h4>
           <Input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter task title"
-            className="w-full text-lg font-medium"
+            className="w-full"
           />
         </div>
 
-        <div className="space-y-3">
-          <h4 className="text-sm font-bold text-foreground uppercase">Description</h4>
-          <textarea
+        <div className="space-y-1">
+          <h4 className="text-base sm:text-lg font-bold text-muted-foreground">Description</h4>
+          <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter task description"
             rows={4}
-            className="w-full px-3 py-2 border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[#58419f] resize-none"
           />
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h4 className="text-sm font-medium text-foreground mb-2">List</h4>
+              <h4 className="text-base sm:text-lg font-bold text-muted-foreground mb-1">List</h4>
               <select
                 value={listId}
                 onChange={(e) => setListId(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
+                className="w-full px-3 py-2 border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
               >
-                <option value="personal">Personal</option>
-                <option value="work">Work</option>
-                <option value="list1">List 1</option>
+                {lists.map((list) => (
+                  <option key={list.id} value={list.id}>
+                    {list.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-foreground mb-2">Due date</h4>
+              <h4 className="text-base sm:text-lg font-bold text-muted-foreground mb-1">Due date</h4>
               <input
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
+                className="w-full px-3 py-2 border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
               />
             </div>
           </div>
         </div>
 
-        <div className="border-t border-border-100 pt-6 space-y-3">
+        {/* <div className="pt-6 space-y-3">
           <h4 className="text-lg font-bold text-foreground">Subtasks:</h4>
           <div className="space-y-2">
             {subtasks.map((subtask) => (
@@ -161,7 +183,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
           </div>
 
           <div className="flex gap-2">
-            <input
+            <Input
               type="text"
               value={newSubtask}
               onChange={(e) => setNewSubtask(e.target.value)}
@@ -169,7 +191,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
                 if (e.key === "Enter") handleAddSubtask();
               }}
               placeholder="Add New Subtask"
-              className="flex-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#58419f]"
+              className="flex-1 h-auto"
             />
             <Button
               onClick={handleAddSubtask}
@@ -180,7 +202,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
               <PlusIcon className="w-5 h-5" />
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="w-full p-6 flex gap-3 max-w-lg mx-auto">
