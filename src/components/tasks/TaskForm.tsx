@@ -34,6 +34,16 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   }, [status, dispatch]);
 
   useEffect(() => {
+    setTitle(task?.title || "");
+    setDescription(task?.description || "");
+    setListId(task?.listId || "");
+    setDueDate(task?.dueDate || "");
+    setSubtasks(task?.subtasks || []);
+    // When switching to create mode, task is null, so state is reset to defaults.
+    // When a new task is selected for editing, state is updated.
+  }, [task]);
+
+  useEffect(() => {
     if (!task?.listId && lists.length > 0) {
       setListId(lists[0].id);
     }
@@ -85,7 +95,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   };
 
   return (
-    <div className="flex flex-col">
+    <div className={`${isMobile ? 'h-full' : 'mt-12 h-auto rounded-xl bg-accent overflow-hidden'}`}>
       <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (
@@ -133,7 +143,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
               <select
                 value={listId}
                 onChange={(e) => setListId(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
               >
                 {lists.map((list) => (
                   <option key={list.id} value={list.id}>
@@ -148,7 +158,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
               />
             </div>
           </div>

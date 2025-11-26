@@ -22,7 +22,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
   }
 
   return (
-    <div className="flex flex-col">
+    <div className={`${isMobile ? 'h-full' : 'mt-12 h-auto rounded-xl bg-accent overflow-hidden'}`}>
       <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (
