@@ -4,6 +4,7 @@ import { Button } from "../ui/Button";
 import { createList } from "../../screens/TaskDashboard/listService";
 import { TaskListInfo } from "../../models/task";
 import { Input } from "../ui/Input";
+import { Textarea } from "../ui/textarea";
 
 const FIXED_COLORS = [
   '#FF6B6B', // Red
@@ -81,8 +82,13 @@ export const AddListModal: React.FC<AddListModalProps> = ({
         </div>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 mb-6">
-            <Input type="text" placeholder="List Name" value={listName} onChange={(e) => setListName(e.target.value)} autoFocus className="h-10 text-base sm:text-base" />
-            <textarea placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full px-3 py-2 text-base text-foreground bg-transparent border border-border rounded-md shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-[80px]" />
+            <Input type="text" placeholder="List Name" value={listName} onChange={(e) => setListName(e.target.value)} autoFocus className="w-full" />
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description (optional)"
+              rows={4}
+            />
             <div>
               <label className="text-sm font-medium text-foreground mb-2 block">Color</label>
               <div className="flex flex-wrap gap-2">
