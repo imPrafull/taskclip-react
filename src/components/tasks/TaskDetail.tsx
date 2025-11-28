@@ -62,18 +62,22 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
             Details
           </span>
           <div className="flex w-full flex-col items-start">
-            <div className="flex w-full items-center gap-2">
+            {task.list && (<div className="flex w-full items-center gap-2">
               <div className="flex w-20 flex-none items-center gap-2">
                 <span className="text-lg text-muted-foreground">
                   List
                 </span>
               </div>
+              
               <div className="flex grow shrink-0 basis-0 items-center gap-2">
-                <span className="text-lg text-foreground">
-                  List name
+                <div
+                  className={`w-3 h-3 rounded-sm`}
+                  style={{ backgroundColor: task.list.color }} />
+                <span className="text-lg text-foreground capitalize">
+                  {task.list.name}
                 </span>
               </div>
-            </div>
+            </div>)}
             <div className="flex w-full items-center gap-2">
               <div className="flex w-20 flex-none items-center gap-2">
                 <span className="text-lg text-muted-foreground">

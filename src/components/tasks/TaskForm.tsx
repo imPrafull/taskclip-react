@@ -1,9 +1,10 @@
-import { ArrowLeftIcon, XIcon, PlusIcon } from "lucide-react";
+import { ArrowLeftIcon, XIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { TaskItem } from "../../models/task";
+import { TaskItem, TaskPayload } from "../../models/task";
 import { Button } from "../ui/Button";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/Input";
+import { Select } from "../ui/select";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchLists } from "../../store/slices/listsSlice";
@@ -11,7 +12,7 @@ import { fetchLists } from "../../store/slices/listsSlice";
 type TaskFormProps = {
   task?: TaskItem | null;
   onClose: () => void;
-  onSave: (task: Partial<TaskItem>) => void;
+  onSave: (task: TaskPayload) => void;
   isMobile: boolean;
   mode: "create" | "edit";
 };
@@ -22,10 +23,11 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
 
   const [title, setTitle] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
-  const [listId, setListId] = useState(task?.listId || "");
+  const [listId, setListId] = useState(task?.list?.id || "");
   const [dueDate, setDueDate] = useState(task?.dueDate || "");
   const [subtasks, setSubtasks] = useState(task?.subtasks || []);
   const [newSubtask, setNewSubtask] = useState("");
+  const [titleError, setTitleError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "idle") {
@@ -36,7 +38,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   useEffect(() => {
     setTitle(task?.title || "");
     setDescription(task?.description || "");
-    setListId(task?.listId || "");
+    setListId(task?.list?.id || "");
     setDueDate(task?.dueDate || "");
     setSubtasks(task?.subtasks || []);
     // When switching to create mode, task is null, so state is reset to defaults.
@@ -44,10 +46,10 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   }, [task]);
 
   useEffect(() => {
-    if (!task?.listId && lists.length > 0) {
-      setListId(lists[0].id);
-    }
-  }, [lists, task?.listId]);
+    // if (!task?.list?.id && lists.length > 0) {
+    //   setListId(lists[0].id);
+    // }
+  }, [lists, task?.list]);
 
   const handleAddSubtask = () => {
     if (newSubtask.trim()) {
@@ -71,20 +73,16 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
 
   const handleSave = () => {
     if (!title.trim()) {
-      alert("Please enter a task title");
+      setTitleError("Title is a required field.");
       return;
     }
 
-    const selectedList = lists.find((list) => list.id === listId);
-
-    const taskData: Partial<TaskItem> = {
+    const taskData: TaskPayload = {
       title,
       description,
-      listId,
+      list: listId, // The backend expects the ID in the 'list' key
       dueDate,
       subtasks,
-      listName: selectedList?.name,
-      listColor: selectedList?.color,
     };
 
     if (mode === "edit" && task) {
@@ -120,10 +118,17 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
           <Input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (titleError) {
+                setTitleError(null);
+              }
+            }}
             placeholder="Enter task title"
             className="w-full"
+            error={!!titleError}
           />
+          {titleError && <p className="text-sm text-red-500">{titleError}</p>}
         </div>
 
         <div className="space-y-1">
@@ -140,25 +145,27 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h4 className="text-base sm:text-lg font-bold text-muted-foreground mb-1">List</h4>
-              <select
+              <Select
                 value={listId}
                 onChange={(e) => setListId(e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
               >
+                <option value="">
+                  None
+                </option>
                 {lists.map((list) => (
                   <option key={list.id} value={list.id}>
                     {list.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <h4 className="text-base sm:text-lg font-bold text-muted-foreground mb-1">Due date</h4>
-              <input
+              <Input
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]"
+                className="w-full"
               />
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { MenuIcon, PlusIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { TaskList } from "../../components/tasks/TaskList";
@@ -46,18 +46,29 @@ export const TaskDashboard = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
+    // This effect is now just for filtering, not for mapping.
     const filterTasks = () => {
-      let filtered = [...tasks];
+      if (listStatus !== 'succeeded') {
+        setFilteredTasks([]);
+        return;
+      }
+
+      // Create a map of lists for quick lookup
+      const listMap = new Map(lists.map(list => [list.id, list]));
+
+      // Map tasks to include the full list object
+      // This mapping will become unnecessary once the backend sends the populated list.
+      let filtered = tasks;
 
       if (selectedListId && selectedListId !== "today") {
-        filtered = filtered.filter((task) => task.listId === selectedListId);
+        filtered = filtered.filter((task) => task.list?.id === selectedListId);
       }
 
       setFilteredTasks(filtered);
     };
 
     filterTasks()
-  }, [tasks, selectedListId]);
+  }, [tasks, lists, selectedListId, listStatus]);
 
   const handleTaskSelect = (taskId: string) => {
     navigate(`/tasks/${taskId}`);

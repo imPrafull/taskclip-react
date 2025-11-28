@@ -23,10 +23,18 @@ export type TaskItem = {
   title: string;
   description: string;
   dueDate: string;
-  listId?: string;
-  listName?: string;
-  listColor?: string;
+  list?: TaskListInfo;
   subtasks?: Subtask[];
   tags?: Tag[];
   completed: boolean;
+};
+
+// Type for the payload when creating or updating a task
+export type TaskPayload = {
+  id?: string;
+  title: string;
+  description: string;
+  list: string; // list ID
+  dueDate: string;
+  subtasks?: Subtask[];
 };

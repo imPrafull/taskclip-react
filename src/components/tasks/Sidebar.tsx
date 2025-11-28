@@ -30,8 +30,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const taskNavItems = [
     { id: 'upcoming', icon: <ChevronRightIcon className="w-5 h-5 text-foreground" />, name: 'Upcoming', count: 12 },
     { id: 'today', icon: <div className="w-5 h-5 flex items-center justify-center">≡</div>, name: 'Today', count: 5 },
-    { id: 'calendar', icon: <div className="w-5 h-5 flex items-center justify-center">📅</div>, name: 'Calendar' },
-    { id: 'sticky', icon: <div className="w-5 h-5 flex items-center justify-center">📌</div>, name: 'Sticky Wall' },
+    // { id: 'calendar', icon: <div className="w-5 h-5 flex items-center justify-center">📅</div>, name: 'Calendar' },
+    // { id: 'sticky', icon: <div className="w-5 h-5 flex items-center justify-center">📌</div>, name: 'Sticky Wall' },
   ];
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -160,7 +160,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
 
-          <div className="px-6 py-4 border-t border-border">
+          {/* <div className="px-6 py-4 border-t border-border">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 TAGS
@@ -179,7 +179,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Tag key={tag.id} tag={tag} />
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="border-t border-border p-6 space-y-2">
