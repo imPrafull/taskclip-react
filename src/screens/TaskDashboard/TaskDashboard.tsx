@@ -1,5 +1,5 @@
 import { MenuIcon, PlusIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { TaskList } from "../../components/tasks/TaskList";
@@ -78,6 +78,10 @@ export const TaskDashboard = (): JSX.Element => {
     navigate('/tasks/new');
   };
 
+  const handleTaskCreated = (newTaskId: string) => {
+    navigate(`/tasks/${newTaskId}`);
+  };
+
   const handleListCreated = (newListInfo: Omit<TaskListInfo, 'id'>) => {
     dispatch(addNewList(newListInfo));
     setSidebarOpen(false);
@@ -145,7 +149,7 @@ export const TaskDashboard = (): JSX.Element => {
 
         <div className={`flex-1 min-w-0 ${!showDetail ? 'hidden' : ''}`}>
             <div className="h-full overflow-hidden">
-                <Outlet context={{ isMobile }} />
+                <Outlet context={{ isMobile, onTaskCreated: handleTaskCreated }} />
             </div>
         </div>
     </div>

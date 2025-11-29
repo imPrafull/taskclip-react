@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { TaskForm } from './TaskForm';
 import { RootState, AppDispatch } from '../../store/store';
 import { fetchTasks, addNewTask, updateTask } from '../../store/slices/tasksSlice';
-import { TaskItem } from '../../models/task';
+import { TaskItem, TaskPayload } from '../../models/task';
 
 interface TaskFormWrapperProps {
     mode: 'create' | 'edit';
@@ -14,7 +14,7 @@ export const TaskFormWrapper = ({ mode }: TaskFormWrapperProps) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
-    const { isMobile } = useOutletContext<{ isMobile: boolean }>();
+    const { isMobile, onTaskCreated } = useOutletContext<{ isMobile: boolean, onTaskCreated: (taskId: string) => void }>();
     const { tasks, status } = useSelector((state: RootState) => state.tasks);
     const [task, setTask] = useState<TaskItem | null>(null);
 
@@ -35,13 +35,24 @@ export const TaskFormWrapper = ({ mode }: TaskFormWrapperProps) => {
         }
     }, [id, mode, tasks]);
 
-    const handleSave = (taskData: Partial<TaskItem>) => {
-        if (mode === 'create') {
-            dispatch(addNewTask(taskData as Omit<TaskItem, 'id'>));
-            navigate('/tasks');
-        } else if (mode === 'edit' && id) {
-            dispatch(updateTask({ ...task, ...taskData }));
-            navigate(`/tasks/${id}`);
+    const handleSave = async (taskData: TaskPayload) => {
+        try {
+            if (mode === 'create') {
+                // When creating a task, it's not completed yet.
+                // The `addNewTask` thunk expects the `completed` property.
+                const taskToCreate = { ...taskData, completed: false };
+                const newTask = await dispatch(addNewTask(taskToCreate)).unwrap();
+                if (onTaskCreated && newTask) {
+                    onTaskCreated(newTask.id);
+                } else {
+                    navigate(`/tasks/${newTask.id}`);
+                }
+            } else if (mode === 'edit' && id) {
+                await dispatch(updateTask({ ...taskData, id })).unwrap();
+                navigate(`/tasks/${id}`);
+            }
+        } catch (err) {
+            console.error('Failed to save the task: ', err);
         }
     };
 

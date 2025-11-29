@@ -12,7 +12,7 @@ import { fetchLists } from "../../store/slices/listsSlice";
 type TaskFormProps = {
   task?: TaskItem | null;
   onClose: () => void;
-  onSave: (task: TaskPayload) => void;
+  onSave: (task: TaskPayload) => Promise<void> | void;
   isMobile: boolean;
   mode: "create" | "edit";
 };
@@ -51,25 +51,25 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
     // }
   }, [lists, task?.list]);
 
-  const handleAddSubtask = () => {
-    if (newSubtask.trim()) {
-      setSubtasks([
-        ...subtasks,
-        { id: Date.now().toString(), title: newSubtask, completed: false },
-      ]);
-      setNewSubtask("");
-    }
-  };
+  // const handleAddSubtask = () => {
+  //   if (newSubtask.trim()) {
+  //     setSubtasks([
+  //       ...subtasks,
+  //       { id: Date.now().toString(), title: newSubtask, completed: false },
+  //     ]);
+  //     setNewSubtask("");
+  //   }
+  // };
 
-  const handleDeleteSubtask = (subtaskId: string) => {
-    setSubtasks(subtasks.filter((s) => s.id !== subtaskId));
-  };
+  // const handleDeleteSubtask = (subtaskId: string) => {
+  //   setSubtasks(subtasks.filter((s) => s.id !== subtaskId));
+  // };
 
-  const handleToggleSubtask = (subtaskId: string) => {
-    setSubtasks(
-      subtasks.map((s) => (s.id === subtaskId ? { ...s, completed: !s.completed } : s))
-    );
-  };
+  // const handleToggleSubtask = (subtaskId: string) => {
+  //   setSubtasks(
+  //     subtasks.map((s) => (s.id === subtaskId ? { ...s, completed: !s.completed } : s))
+  //   );
+  // };
 
   const handleSave = () => {
     if (!title.trim()) {

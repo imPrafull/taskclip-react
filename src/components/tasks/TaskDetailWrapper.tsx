@@ -28,8 +28,6 @@ export const TaskDetailWrapper = () => {
         if (!taskFromStore || listStatus !== 'succeeded') {
             return undefined;
         }
-        // This mapping will become unnecessary once the backend sends the populated list.
-        // For now, it's corrected to use the right property names.
         return taskFromStore;
     }, [id, tasks, lists, listStatus]);
 
@@ -37,10 +35,15 @@ export const TaskDetailWrapper = () => {
         navigate(`/tasks/edit/${id}`);
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (id) {
-            dispatch(deleteTask(id));
-            navigate('/tasks');
+            try {
+                await dispatch(deleteTask(id)).unwrap();
+                navigate('/tasks');
+            } catch (err) {
+                console.error('Failed to delete the task: ', err);
+                // Optionally, show an error message to the user here
+            }
         }
     };
 
