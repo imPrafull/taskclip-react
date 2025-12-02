@@ -1,4 +1,4 @@
-import { ChevronRightIcon, SettingsIcon, LogOutIcon, XIcon, PlusIcon } from "lucide-react";
+import { ChevronRightIcon, SettingsIcon, LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../lib/authService";
@@ -7,6 +7,7 @@ import { Tag as TagType, TaskListInfo } from "../../models/task";
 import { AddListModal } from "./AddListModal";
 import { AddTagModal } from "./AddTagModal";
 import Tag from "../ui/Tag";
+import { useTheme } from "../../hooks/useTheme";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -27,6 +28,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onListCreated,
   tags,
 }) => {
+  const { theme, toggleTheme } = useTheme();
+
   const taskNavItems = [
     { id: 'upcoming', icon: <ChevronRightIcon className="w-5 h-5 text-foreground" />, name: 'Upcoming', count: 12 },
     { id: 'today', icon: <div className="w-5 h-5 flex items-center justify-center">≡</div>, name: 'Today', count: 5 },
@@ -186,9 +189,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Button
             variant="ghost"
             className="w-full !justify-start gap-3 text-foreground"
+            onClick={toggleTheme}
           >
-            <SettingsIcon className="w-5 h-5" />
-            Settings
+            {theme === 'dark' ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
+            Switch Theme
           </Button>
           <Button
             variant="ghost"
