@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, PinIcon, PinOffIcon, XIcon } from "lucide-react";
 import React from "react";
 import { TaskItem } from "../../models/task";
 import { Button } from "../ui/Button";
@@ -9,9 +9,11 @@ type TaskDetailProps = {
   onEdit: (task: TaskItem) => void;
   onDelete: (taskId: string) => void;
   isMobile: boolean;
+  isPinned: boolean;
+  onPinToggle: () => void;
 };
 
-export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, onDelete, isMobile }) => {
+export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, onDelete, isMobile, isPinned, onPinToggle }) => {
 
   if (!task) {
     return (
@@ -22,7 +24,15 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
   }
 
   return (
-    <div className={`${isMobile ? 'h-full' : 'mt-12 h-auto rounded-xl bg-accent overflow-hidden'}`}>
+    <div
+      className={`flex flex-col ${
+        isMobile
+          ? 'h-full bg-background'
+          : isPinned
+          ? 'h-full bg-accent rounded-xl'
+          : 'h-full bg-accent rounded-xl shadow-lg'
+      }`}
+    >
       <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (
@@ -33,9 +43,18 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
           <h3 className="text-xl font-bold text-foreground">Task</h3>
         </div>
         {!isMobile && (
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <XIcon className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={onPinToggle}>
+              {isPinned ? (
+                <PinOffIcon className="w-5 h-5" />
+              ) : (
+                <PinIcon className="w-5 h-5" />
+              )}
+            </Button>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <XIcon className="w-5 h-5" />
+            </Button>
+          </div>
         )}
       </div>
 

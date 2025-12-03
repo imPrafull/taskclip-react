@@ -23,6 +23,7 @@ export const TaskDashboard = (): JSX.Element => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDetailPinned, setIsDetailPinned] = useState(true);
 
   useEffect(() => {
     if (taskStatus === 'idle') {
@@ -89,6 +90,10 @@ export const TaskDashboard = (): JSX.Element => {
 
   const showDetail = location.pathname !== '/tasks';
 
+  useEffect(() => {
+    if (isMobile) setIsDetailPinned(false);
+  }, [isMobile]);
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
@@ -104,7 +109,7 @@ export const TaskDashboard = (): JSX.Element => {
         tags={tags}
       />
 
-        <div className={`flex-1 flex flex-col min-w-0 ${isMobile && showDetail ? 'hidden' : 'flex'}`}>
+        <div className={`flex-1 flex flex-col min-w-0 ${isMobile && showDetail && !isDetailPinned ? 'hidden' : 'flex'}`}>
             <div className="flex items-center gap-4 p-6">
                 <Button
                     variant="ghost"
@@ -147,11 +152,19 @@ export const TaskDashboard = (): JSX.Element => {
             )}
         </div>
 
-        <div className={`flex-1 min-w-0 ${!showDetail ? 'hidden' : ''}`}>
-            <div className="h-full overflow-hidden">
-                <Outlet context={{ isMobile, onTaskCreated: handleTaskCreated }} />
+        {showDetail && (
+          isDetailPinned && !isMobile ? (
+            <div className="flex-1 min-w-0">
+              <div className="h-full overflow-hidden pt-12 pr-4 pb-12 pl-0 max-w-lg">
+                <Outlet context={{ isMobile, onTaskCreated: handleTaskCreated, isDetailPinned, setIsDetailPinned }} />
+              </div>
             </div>
-        </div>
+          ) : ( // Unpinned "popup" mode on desktop, or default view on mobile
+            <div className={`absolute z-10 ${isMobile ? 'inset-0' : 'h-full top-0 right-0 w-1/2 max-w-lg pt-12 px-4 pb-12'}`}>
+                <Outlet context={{ isMobile, onTaskCreated: handleTaskCreated, isDetailPinned, setIsDetailPinned }} />
+            </div>
+          )
+        )}
     </div>
   );
 };

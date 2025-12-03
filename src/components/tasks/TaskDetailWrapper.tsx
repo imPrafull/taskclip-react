@@ -10,7 +10,12 @@ export const TaskDetailWrapper = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
-    const { isMobile } = useOutletContext<{ isMobile: boolean }>();
+    const { 
+        isMobile, 
+        isDetailPinned, 
+        setIsDetailPinned 
+    } = useOutletContext<{ isMobile: boolean; isDetailPinned: boolean; setIsDetailPinned: (pinned: boolean) => void; }>();
+
     const { tasks, status: taskStatus } = useSelector((state: RootState) => state.tasks);
     const { lists, status: listStatus } = useSelector((state: RootState) => state.lists);
 
@@ -62,6 +67,8 @@ export const TaskDetailWrapper = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
             isMobile={isMobile}
+            isPinned={isDetailPinned}
+            onPinToggle={() => setIsDetailPinned(!isDetailPinned)}
         />
     );
 };

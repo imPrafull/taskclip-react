@@ -73,7 +73,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           overflow-y-auto flex flex-col h-screen
         `}
       >
-        <div className="p-6 border-b border-border">
+        <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-foreground">Menu</h2>
             <Button
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </nav>
           </div>
 
-          <div className="px-6 py-4 border-t border-border">
+          <div className="px-6 py-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 LISTS
@@ -185,7 +185,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div> */}
         </div>
 
-        <div className="border-t border-border p-6 space-y-2">
+        <div className="p-6 space-y-2">
           <Button
             variant="ghost"
             className="w-full !justify-start gap-3 text-foreground"
