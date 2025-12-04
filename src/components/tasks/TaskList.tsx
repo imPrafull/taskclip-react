@@ -1,14 +1,13 @@
-import { ChevronRightIcon } from "lucide-react";
 import React from "react";
-import { TaskItem } from "../../models/task";
+import { TaskItem } from "./TaskItem";
+import { TaskItem as Task } from "../../models/task";
 
 type TaskListProps = {
-  tasks: TaskItem[];
-  onTaskSelect: (taskId: string) => void;
+  tasks: Task[];
   selectedTaskId?: string;
 };
 
-export const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskSelect, selectedTaskId }) => {
+export const TaskList: React.FC<TaskListProps> = ({ tasks, selectedTaskId }) => {
   if (tasks.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -18,34 +17,13 @@ export const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskSelect, selecte
   }
 
   return (
-    <div className="divide-y divide-gray-100">
+    <div className="divide-y-2 divide-gray-100">
       {tasks.map((task) => (
-        <button
+        <TaskItem
           key={task.id}
-          onClick={() => onTaskSelect(task.id)}
-          className={`
-            w-full text-left p-4 transition-colors flex items-center justify-between 
-            ${selectedTaskId === task.id ? 'bg-accent' : 'hover:bg-muted'}
-          `}
-        >
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <input
-              type="checkbox"
-              checked={task.completed}
-              onChange={(e) => e.stopPropagation()}
-              className="w-5 h-5 text-foreground cursor-pointer"
-            />
-            <div className="flex-1 min-w-0">
-              <p className="text-foreground font-medium truncate">{task.title}</p>
-              {task.subtasks && task.subtasks.length > 0 && (
-                <p className="text-sm text-foreground">
-                  {task.subtasks.filter((s) => s.completed).length} Subtasks
-                </p>
-              )}
-            </div>
-          </div>
-          <ChevronRightIcon className="w-5 h-5 text-foreground flex-shrink-0" />
-        </button>
+          task={task}
+          selectedTaskId={selectedTaskId}
+        />
       ))}
     </div>
   );

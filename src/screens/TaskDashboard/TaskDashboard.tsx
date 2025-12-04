@@ -71,10 +71,6 @@ export const TaskDashboard = (): JSX.Element => {
     filterTasks()
   }, [tasks, lists, selectedListId, listStatus]);
 
-  const handleTaskSelect = (taskId: string) => {
-    navigate(`/tasks/${taskId}`);
-  };
-
   const handleAddNewTask = () => {
     navigate('/tasks/new');
   };
@@ -145,7 +141,6 @@ export const TaskDashboard = (): JSX.Element => {
                     </button>
                     <TaskList
                         tasks={filteredTasks}
-                        onTaskSelect={handleTaskSelect}
                         selectedTaskId={selectedTaskId}
                     />
                 </div>
