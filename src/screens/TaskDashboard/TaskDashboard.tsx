@@ -1,4 +1,4 @@
-import { MenuIcon, PlusIcon } from "lucide-react";
+import { MenuIcon, PlusIcon, SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
@@ -10,6 +10,7 @@ import { RootState, AppDispatch } from '../../store/store';
 import { fetchTasks } from '../../store/slices/tasksSlice';
 import { fetchLists, addNewList, selectList } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
+import { Input } from "../../components/ui/Input";
 
 export const TaskDashboard = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
@@ -23,6 +24,7 @@ export const TaskDashboard = (): JSX.Element => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isDetailPinned, setIsDetailPinned] = useState(true);
 
   useEffect(() => {
@@ -106,17 +108,29 @@ export const TaskDashboard = (): JSX.Element => {
       />
 
         <div className={`flex-1 flex flex-col min-w-0 ${isMobile && showDetail && !isDetailPinned ? 'hidden' : 'flex'}`}>
-            <div className="flex items-center gap-4 p-6">
+            <div className="flex items-center gap-4 p-4 lg:p-6 border-b border-border">
                 <Button
                     variant="ghost"
                     size="icon"
                     className="lg:hidden"
                     onClick={() => setSidebarOpen(true)}
                 >
-                    <MenuIcon className="w-6 h-6" />
+                    <MenuIcon className="w-6 h-6 text-foreground" />
                 </Button>
-                <h1 className="text-2xl font-bold text-foreground">Today</h1>
-                <span className="text-2xl font-bold text-foreground">{filteredTasks.length}</span>
+                <div className="hidden lg:flex items-center gap-3">
+                  <img src="/logo.png" alt="TaskClip Logo" className="w-7 h-7" />
+                  <h2 className="text-2xl font-bold text-foreground">TaskClip</h2>
+                </div>
+                 <div className="relative flex-1 max-w-md">
+                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                        type="text"
+                        placeholder="Search tasks..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2"
+                    />
+                </div>
             </div>
 
             {(taskStatus === 'loading' || listStatus === 'loading' || tagsStatus === 'loading') && (

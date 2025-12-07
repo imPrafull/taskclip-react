@@ -1,4 +1,4 @@
-import { ChevronRightIcon, SettingsIcon, LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon } from "lucide-react";
+import { ChevronRightIcon, LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon, UserIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../api/auth";
@@ -37,7 +37,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     // { id: 'sticky', icon: <div className="w-5 h-5 flex items-center justify-center">📌</div>, name: 'Sticky Wall' },
   ];
 
-  const [searchQuery, setSearchQuery] = useState("");
   const [isAddListModalOpen, setAddListModalOpen] = useState(false);
   const [isAddTagModalOpen, setAddTagModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -75,7 +74,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-foreground">Menu</h2>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                <UserIcon className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="font-semibold text-foreground">John Doe</p>
+                <p className="text-sm text-muted-foreground">john.doe@example.com</p>
+              </div>
+            </div>
             <Button
               variant="ghost"
               size="icon"
@@ -84,16 +91,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <XIcon className="w-5 h-5" />
             </Button>
-          </div>
-
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 text-foreground bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
           </div>
         </div>
 
