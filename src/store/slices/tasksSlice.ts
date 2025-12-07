@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TaskItem, TaskPayload } from '../../models/task';
-import { apiService } from '../../lib/apiService';
+import { apiService } from '../../api/api';
 
 interface TasksState {
   tasks: TaskItem[];

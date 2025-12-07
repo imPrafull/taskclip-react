@@ -1,13 +1,13 @@
 import { ChevronRightIcon, SettingsIcon, LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "../../lib/authService";
-import { Button } from "../ui/Button";
-import { Tag as TagType, TaskListInfo } from "../../models/task";
+import { authService } from "../api/auth";
+import { Button } from "./ui/Button";
+import { Tag as TagType, TaskListInfo } from "../models/task";
 import { AddListModal } from "./AddListModal";
 import { AddTagModal } from "./AddTagModal";
-import Tag from "../ui/Tag";
-import { useTheme } from "../../hooks/useTheme";
+import Tag from "./ui/Tag";
+import { useTheme } from "../hooks/useTheme";
 
 type SidebarProps = {
   isOpen: boolean;

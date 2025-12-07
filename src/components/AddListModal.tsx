@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { XIcon } from "lucide-react";
-import { Button } from "../ui/Button";
-import { createList } from "../../screens/TaskDashboard/listService";
-import { TaskListInfo } from "../../models/task";
-import { Input } from "../ui/Input";
-import { Textarea } from "../ui/textarea";
+import { Button } from "./ui/Button";
+import { createList } from "../api/lists";
+import { TaskListInfo } from "../models/task";
+import { Input } from "./ui/Input";
+import { Textarea } from "./ui/Textarea";
 
 const FIXED_COLORS = [
   '#FF6B6B', // Red

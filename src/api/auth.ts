@@ -1,6 +1,6 @@
 import { AuthApiResponse, AuthResponse, User } from "../models/auth";
-import { storageService, USER_KEY, TOKEN_KEY } from "./storageService";
-import { apiService } from "./apiService";
+import { storageService, USER_KEY, TOKEN_KEY } from "../lib/storage";
+import { apiService } from "./api";
 
 export const authService = {
   signUp: async (name: string, email: string, password: string): Promise<AuthResponse> => {

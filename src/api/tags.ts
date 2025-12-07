@@ -1,5 +1,5 @@
-import { apiService } from "../../lib/apiService";
-import { Tag } from "../../models/task";
+import { apiService } from "./api";
+import { Tag } from "../models/task";
 
 export type CreateTagPayload = {
   name: string;

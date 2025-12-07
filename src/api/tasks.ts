@@ -1,5 +1,5 @@
-import { TaskItem } from "../../models/task";
-import { apiService } from "../../lib/apiService";
+import { TaskItem } from "../models/task";
+import { apiService } from "./api";
 
 export async function fetchTasks(): Promise<TaskItem[]> {
   const data = await apiService.apiFetch<TaskItem[]>("/tasks?sortBy=createdAt:asc");

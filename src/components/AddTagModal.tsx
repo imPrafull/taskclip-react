@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { XIcon } from "lucide-react";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
+import { Button } from "./ui/Button";
+import { Input } from "./ui/Input";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store/store";
-import { addNewTag } from "../../store/slices/tagsSlice";
-import { Textarea } from "../ui/textarea";
+import { AppDispatch } from "../store/store";
+import { addNewTag } from "../store/slices/tagsSlice";
+import { Textarea } from "./ui/Textarea";
 
 const FIXED_COLORS = [
   '#FF6B6B', // Red

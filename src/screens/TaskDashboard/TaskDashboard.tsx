@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { TaskList } from "../../components/tasks/TaskList";
-import { Sidebar } from "../../components/tasks/Sidebar";
+import { Sidebar } from "../../components/Sidebar";
 import { Button } from "../../components/ui/Button";
 import { TaskItem, TaskListInfo } from "../../models/task";
 import { RootState, AppDispatch } from '../../store/store';

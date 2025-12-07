@@ -1,5 +1,5 @@
-import { apiService } from "../../lib/apiService";
-import { TaskListInfo } from "../../models/task";
+import { apiService } from "./api";
+import { TaskListInfo } from "../models/task";
 
 export type CreateListPayload = {
   name: string;

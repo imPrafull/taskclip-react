@@ -1,4 +1,4 @@
-import { storageService, TOKEN_KEY } from "./storageService";
+import { storageService, TOKEN_KEY } from "../lib/storage";
 
 export const API_BASE_URL = "http://localhost:3000";
 

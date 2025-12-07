@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, EyeOffIcon, EyeIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "../../lib/authService";
+import { authService } from "../../api/auth";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 
