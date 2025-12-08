@@ -107,21 +107,28 @@ export const TaskDashboard = (): JSX.Element => {
         tags={tags}
       />
 
-        <div className={`flex-1 flex flex-col min-w-0 ${isMobile && showDetail && !isDetailPinned ? 'hidden' : 'flex'}`}>
-            <div className="flex items-center gap-4 p-4 lg:p-6 border-b border-border">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="lg:hidden"
-                    onClick={() => setSidebarOpen(true)}
-                >
-                    <MenuIcon className="w-6 h-6 text-foreground" />
-                </Button>
-                <div className="hidden lg:flex items-center gap-3">
-                  <img src="/logo.png" alt="TaskClip Logo" className="w-7 h-7" />
-                  <h2 className="text-2xl font-bold text-foreground">TaskClip</h2>
-                </div>
-                 <div className="relative flex-1 max-w-md">
+      <div
+        className={`flex-1 flex flex-col min-w-0 ${
+          isMobile && showDetail && !isDetailPinned ? "hidden" : "flex"
+        }`}
+      >
+        <div className="p-4 lg:p-6">
+          <div className="flex items-center justify-between pb-4">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <MenuIcon className="w-6 h-6 text-foreground" />
+              </Button>
+              <div className="flex items-center">
+                <img src="/logo.png" alt="TaskClip Logo" className="w-8 h-8" />
+                <h2 className="text-4xl font-bold text-foreground ml-[-6px]">askclip</h2>
+              </div>
+            </div>
+            {/* <div className="relative flex-1 max-w-md ml-4">
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
                         type="text"
@@ -130,50 +137,72 @@ export const TaskDashboard = (): JSX.Element => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-4 py-2"
                     />
-                </div>
-            </div>
-
-            {(taskStatus === 'loading' || listStatus === 'loading' || tagsStatus === 'loading') && (
-                <div className="flex-1 flex items-center justify-center">
-                    <p className="text-foreground">Loading...</p>
-                </div>
-            )}
-            {(taskError || listError || tagsError) && (
-                <div className="flex-1 flex items-center justify-center p-4">
-                    <p className="text-red-500">Error: {taskError || listError || tagsError}</p>
-                </div>
-            )}
-
-            {(taskStatus === 'succeeded' && listStatus === 'succeeded' && tagsStatus === 'succeeded') && (
-                <div className="flex-1 overflow-y-auto">
-                    <button
-                        onClick={handleAddNewTask}
-                        className="w-full flex items-center gap-2 p-6 text-foreground hover:text-foreground transition-colors"
-                    >
-                        <PlusIcon className="w-5 h-5" />
-                        <span className="font-medium">Add New Task</span>
-                    </button>
-                    <TaskList
-                        tasks={filteredTasks}
-                        selectedTaskId={selectedTaskId}
-                    />
-                </div>
-            )}
+                </div> */}
+          </div>
+          <div className="flex items-center justify-between">
+            <Button
+              onClick={handleAddNewTask}
+              className="flex items-center gap-2 p-6"
+            >
+              <PlusIcon className="w-5 h-5" />
+              <span className="font-medium mb-1">Add New Task</span>
+            </Button>
+          </div>
         </div>
 
-        {showDetail && (
-          isDetailPinned && !isMobile ? (
-            <div className="flex-1 min-w-0">
-              <div className="h-full overflow-hidden pt-12 pr-4 pb-12 pl-0 max-w-lg">
-                <Outlet context={{ isMobile, onTaskCreated: handleTaskCreated, isDetailPinned, setIsDetailPinned }} />
-              </div>
-            </div>
-          ) : ( // Unpinned "popup" mode on desktop, or default view on mobile
-            <div className={`absolute z-10 ${isMobile ? 'inset-0' : 'h-full top-0 right-0 w-1/2 max-w-lg pt-12 px-4 pb-12'}`}>
-                <Outlet context={{ isMobile, onTaskCreated: handleTaskCreated, isDetailPinned, setIsDetailPinned }} />
-            </div>
-          )
+        {(taskStatus === "loading" || listStatus === "loading" || tagsStatus === "loading") && (
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-foreground">Loading...</p>
+          </div>
         )}
+        {(taskError || listError || tagsError) && (
+          <div className="flex-1 flex items-center justify-center p-4">
+            <p className="text-red-500">
+              Error: {taskError || listError || tagsError}
+            </p>
+          </div>
+        )}
+
+        {taskStatus === "succeeded" && listStatus === "succeeded" && tagsStatus === "succeeded" && (
+          <div className="flex-1 overflow-y-auto">
+            <TaskList tasks={filteredTasks} selectedTaskId={selectedTaskId} />
+          </div>
+        )}
+      </div>
+
+      {showDetail &&
+        (isDetailPinned && !isMobile ? (
+          <div className="flex-1 min-w-0">
+            <div className="h-full overflow-hidden pt-12 pr-4 pb-12 pl-0 max-w-lg">
+              <Outlet
+                context={{
+                  isMobile,
+                  onTaskCreated: handleTaskCreated,
+                  isDetailPinned,
+                  setIsDetailPinned,
+                }}
+              />
+            </div>
+          </div>
+        ) : (
+          // Unpinned "popup" mode on desktop, or default view on mobile
+          <div
+            className={`absolute z-10 ${
+              isMobile
+                ? "inset-0"
+                : "h-full top-0 right-0 w-1/2 max-w-lg pt-12 px-4 pb-12"
+            }`}
+          >
+            <Outlet
+              context={{
+                isMobile,
+                onTaskCreated: handleTaskCreated,
+                isDetailPinned,
+                setIsDetailPinned,
+              }}
+            />
+          </div>
+        ))}
     </div>
   );
 };

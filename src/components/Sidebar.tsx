@@ -1,5 +1,5 @@
 import { ChevronRightIcon, LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon, UserIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../api/auth";
 import { Button } from "./ui/Button";
@@ -8,6 +8,9 @@ import { AddListModal } from "./AddListModal";
 import { AddTagModal } from "./AddTagModal";
 import Tag from "./ui/Tag";
 import { useTheme } from "../hooks/useTheme";
+import { storageService, USER_KEY } from "../lib/storage";
+import { User } from "../models/auth";
+import UserCard from "./UserCard";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -39,7 +42,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const [isAddListModalOpen, setAddListModalOpen] = useState(false);
   const [isAddTagModalOpen, setAddTagModalOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const raw = storageService.getItem(USER_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as User;
+        setUser(parsed);
+      } catch (e) {
+        setUser(null);
+      }
+    }
+  }, []);
 
   const handleLogout = () => {
     authService.logout();
@@ -74,15 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                <UserIcon className="w-6 h-6 text-muted-foreground" />
-              </div>
-              <div>
-                <p className="font-semibold text-foreground">John Doe</p>
-                <p className="text-sm text-muted-foreground">john.doe@example.com</p>
-              </div>
-            </div>
+            <UserCard user={user} />
             <Button
               variant="ghost"
               size="icon"

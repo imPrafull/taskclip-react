@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, XIcon, PinIcon, PinOffIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { TaskItem, TaskPayload } from "../../models/task";
 import { Button } from "../ui/Button";
@@ -15,9 +15,11 @@ type TaskFormProps = {
   onSave: (task: TaskPayload) => Promise<void> | void;
   isMobile: boolean;
   mode: "create" | "edit";
+  isPinned?: boolean;
+  onPinToggle?: () => void;
 };
 
-export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMobile, mode }) => {
+export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMobile, mode, isPinned, onPinToggle }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { lists, status } = useSelector((state: RootState) => state.lists);
 
@@ -93,7 +95,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   };
 
   return (
-    <div className={`${isMobile ? 'h-full' : 'mt-12 h-auto rounded-xl bg-accent overflow-hidden'}`}>
+    <div className={`flex flex-col ${isMobile ? 'h-full' : 'h-full rounded-xl bg-accent overflow-hidden'} ${isPinned ? '' : 'shadow-lg' }`}>
       <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (
@@ -106,9 +108,16 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
           </h2>
         </div>
         {!isMobile && (
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <XIcon className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {onPinToggle && (
+              <Button variant="ghost" size="icon" onClick={onPinToggle}>
+                {isPinned ? <PinOffIcon className="w-5 h-5" /> : <PinIcon className="w-5 h-5" />}
+              </Button>
+            )}
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <XIcon className="w-5 h-5" />
+            </Button>
+          </div>
         )}
       </div>
 

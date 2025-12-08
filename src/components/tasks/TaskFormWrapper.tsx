@@ -14,7 +14,7 @@ export const TaskFormWrapper = ({ mode }: TaskFormWrapperProps) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
-    const { isMobile, onTaskCreated } = useOutletContext<{ isMobile: boolean, onTaskCreated: (taskId: string) => void }>();
+    const { isMobile, onTaskCreated, isDetailPinned, setIsDetailPinned } = useOutletContext<{ isMobile: boolean, onTaskCreated: (taskId: string) => void, isDetailPinned?: boolean, setIsDetailPinned?: (pinned: boolean) => void }>();
     const { tasks, status } = useSelector((state: RootState) => state.tasks);
     const [task, setTask] = useState<TaskItem | null>(null);
 
@@ -75,6 +75,8 @@ export const TaskFormWrapper = ({ mode }: TaskFormWrapperProps) => {
             onSave={handleSave}
             isMobile={isMobile}
             mode={mode}
+            isPinned={isDetailPinned}
+            onPinToggle={setIsDetailPinned ? () => setIsDetailPinned(!isDetailPinned) : undefined}
         />
     );
 };
