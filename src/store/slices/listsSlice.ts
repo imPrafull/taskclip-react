@@ -4,14 +4,12 @@ import { apiService } from '../../api/api';
 
 interface ListsState {
   lists: TaskListInfo[];
-  selectedListId: string | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
 
 const initialState: ListsState = {
   lists: [],
-  selectedListId: 'today',
   status: 'idle',
   error: null,
 };
@@ -33,9 +31,6 @@ const listsSlice = createSlice({
   name: 'lists',
   initialState,
   reducers: {
-    selectList: (state, action: PayloadAction<string>) => {
-      state.selectedListId = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -56,5 +51,4 @@ const listsSlice = createSlice({
   },
 });
 
-export const { selectList } = listsSlice.actions;
 export default listsSlice.reducer;

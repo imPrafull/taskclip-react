@@ -25,12 +25,12 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
 
   return (
     <div
-      className={`flex flex-col ${
+      className={`h-full flex flex-col bg-background ring ring-accent ml-2 ${
         isMobile
-          ? 'h-full bg-background'
+          ? ''
           : isPinned
-          ? 'h-full bg-accent rounded-xl'
-          : 'h-full bg-accent rounded-xl shadow-lg'
+          ? 'rounded-xl shadow-lg'
+          : 'rounded-xl shadow-lg'
       }`}
     >
       <div className="flex items-center justify-between p-6">

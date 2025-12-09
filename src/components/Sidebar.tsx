@@ -1,4 +1,4 @@
-import { ChevronRightIcon, LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon, UserIcon } from "lucide-react";
+import { ChevronRightIcon, LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon, AlertTriangleIcon, ListTodoIcon, ClockAlertIcon, ClockArrowUpIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../api/auth";
@@ -16,7 +16,9 @@ type SidebarProps = {
   isOpen: boolean;
   onClose: () => void;
   selectedListId: string | null;
-  onListSelect: (listId: string) => void;
+  selectedTaskNavItemId: string | null;
+  onListSelect: (listId: string | null) => void;
+  onTaskNavItemSelect: (itemId: string | null) => void;
   lists: TaskListInfo[];
   onListCreated: (newList: TaskListInfo) => void;
   tags: TagType[];
@@ -26,7 +28,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   onClose,
   selectedListId,
+  selectedTaskNavItemId,
   onListSelect,
+  onTaskNavItemSelect,
   lists,
   onListCreated,
   tags,
@@ -34,8 +38,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { theme, toggleTheme } = useTheme();
 
   const taskNavItems = [
-    { id: 'upcoming', icon: <ChevronRightIcon className="w-5 h-5 text-foreground" />, name: 'Upcoming', count: 12 },
-    { id: 'today', icon: <div className="w-5 h-5 flex items-center justify-center">≡</div>, name: 'Today', count: 5 },
+    { id: 'all', icon: <ListTodoIcon className="w-5 h-5 text-foreground" />, name: 'All', count: 12 },
+    { id: 'today', icon: <ClockAlertIcon className="w-5 h-5 text-foreground" />, name: 'Today', count: 12 },
+    { id: 'upcoming', icon: <ClockArrowUpIcon className="w-5 h-5 text-foreground" />, name: 'Upcoming', count: 12 },
+    { id: 'delayed', icon: <AlertTriangleIcon className="w-5 h-5 text-foreground" />, name: 'Delayed', count: 5 },
     // { id: 'calendar', icon: <div className="w-5 h-5 flex items-center justify-center">📅</div>, name: 'Calendar' },
     // { id: 'sticky', icon: <div className="w-5 h-5 flex items-center justify-center">📌</div>, name: 'Sticky Wall' },
   ];
@@ -111,13 +117,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {taskNavItems.map(item => (
                 <button
                   key={item.id}
-                  onClick={item.id === 'today' ? () => onListSelect("today") : undefined}
+                  onClick={() => {
+                    onTaskNavItemSelect(selectedTaskNavItemId === item.id ? null : item.id);
+                  }}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
-                    selectedListId === item.id
+                    selectedTaskNavItemId === item.id
                       ? "bg-accent text-accent-foreground"
                       : "text-foreground hover:bg-muted"
                   }`}
-                  disabled={item.id !== 'today'} // Disabling non-functional buttons for now
                 >
                   <div className="flex items-center gap-2">
                     {item.icon}
@@ -148,7 +155,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {lists.map((list) => (
                 <button
                   key={list.id}
-                  onClick={() => onListSelect(list.id)}
+                  onClick={() => {
+                    onListSelect(selectedListId === list.id ? null : list.id); // Deselect if already selected
+                  }}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
                     selectedListId === list.id
                       ? "bg-accent text-accent-foreground"

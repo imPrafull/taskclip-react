@@ -82,7 +82,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
     const taskData: TaskPayload = {
       title,
       description,
-      list: listId, // The backend expects the ID in the 'list' key
+      list: listId || null, // The backend expects the ID in the 'list' key
       dueDate,
       subtasks,
     };
@@ -95,7 +95,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   };
 
   return (
-    <div className={`flex flex-col ${isMobile ? 'h-full' : 'h-full rounded-xl bg-accent overflow-hidden'} ${isPinned ? '' : 'shadow-lg' }`}>
+    <div className={`h-full flex flex-col bg-background ring ring-accent ml-2 ${isMobile ? '' : 'rounded-xl overflow-hidden'} ${isPinned ? '' : 'shadow-lg' }`}>
       <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (

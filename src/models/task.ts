@@ -34,7 +34,7 @@ export type TaskPayload = {
   id?: string;
   title: string;
   description: string;
-  list: string; // list ID
+  list: string | null; // list ID
   dueDate: string;
   subtasks?: Subtask[];
 };

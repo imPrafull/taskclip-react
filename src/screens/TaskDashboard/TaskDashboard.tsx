@@ -8,9 +8,10 @@ import { Button } from "../../components/ui/Button";
 import { TaskItem, TaskListInfo } from "../../models/task";
 import { RootState, AppDispatch } from '../../store/store';
 import { fetchTasks } from '../../store/slices/tasksSlice';
-import { fetchLists, addNewList, selectList } from '../../store/slices/listsSlice';
+import { fetchLists, addNewList } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
-import { Input } from "../../components/ui/Input";
+// import { Input } from "../../components/ui/Input";
+import { selectList, selectTaskNavItem } from '../../store/slices/filtersSlice';
 
 export const TaskDashboard = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
@@ -18,13 +19,14 @@ export const TaskDashboard = (): JSX.Element => {
   const location = useLocation();
   const { id: selectedTaskId } = useParams<{ id: string }>();
   const { tasks, status: taskStatus, error: taskError } = useSelector((state: RootState) => state.tasks);
-  const { lists, selectedListId, status: listStatus, error: listError } = useSelector((state: RootState) => state.lists);
+  const { lists, status: listStatus, error: listError } = useSelector((state: RootState) => state.lists);
+  const { selectedListId, selectedTaskNavItemId } = useSelector((state: RootState) => state.taskfilters);
   const { tags, status: tagsStatus, error: tagsError } = useSelector((state: RootState) => state.tags);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
   const [isMobile, setIsMobile] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
   const [isDetailPinned, setIsDetailPinned] = useState(true);
 
   useEffect(() => {
@@ -49,21 +51,50 @@ export const TaskDashboard = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    // This effect is now just for filtering, not for mapping.
     const filterTasks = () => {
       if (listStatus !== 'succeeded') {
         setFilteredTasks([]);
         return;
       }
 
-      // Create a map of lists for quick lookup
-      const listMap = new Map(lists.map(list => [list.id, list]));
-
-      // Map tasks to include the full list object
-      // This mapping will become unnecessary once the backend sends the populated list.
       let filtered = tasks;
 
-      if (selectedListId && selectedListId !== "today") {
+      // 1. Apply Task Nav Item filter (Today, Upcoming, etc.)
+      if (selectedTaskNavItemId) {
+        switch (selectedTaskNavItemId) {
+          case 'all':
+            break;
+          case 'today': {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            filtered = filtered.filter(task => {
+              if (!task.dueDate) return false;
+              const dueDate = new Date(task.dueDate);
+              return dueDate >= today && dueDate < tomorrow;
+            });
+            break;
+          }
+          case 'upcoming': {
+            const today = new Date();
+            const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+            filtered = filtered.filter(task => task.dueDate && new Date(task.dueDate) < nextWeek);
+            break;
+          }
+          case 'delayed': {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Compare with the start of today
+            filtered = filtered.filter(task =>
+              task.dueDate && new Date(task.dueDate) < today && !task.completed
+            );
+            break;
+          }
+        }
+      }
+
+      // 2. Apply List filter on top of the previous result
+      if (selectedListId) {
         filtered = filtered.filter((task) => task.list?.id === selectedListId);
       }
 
@@ -71,7 +102,7 @@ export const TaskDashboard = (): JSX.Element => {
     };
 
     filterTasks()
-  }, [tasks, lists, selectedListId, listStatus]);
+  }, [tasks, lists, selectedListId, selectedTaskNavItemId, listStatus]);
 
   const handleAddNewTask = () => {
     navigate('/tasks/new');
@@ -98,9 +129,13 @@ export const TaskDashboard = (): JSX.Element => {
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         selectedListId={selectedListId}
+        selectedTaskNavItemId={selectedTaskNavItemId}
         onListSelect={(listId) => {
-          dispatch(selectList(listId));
+          dispatch(selectList(listId!)); 
           setSidebarOpen(false);
+        }}
+        onTaskNavItemSelect={(itemId) => {
+          dispatch(selectTaskNavItem(itemId!));
         }}
         lists={lists}
         onListCreated={handleListCreated}
