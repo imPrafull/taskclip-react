@@ -3,7 +3,7 @@ import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { TaskForm } from './TaskForm';
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchTasks, addNewTask, updateTask } from '../../store/slices/tasksSlice';
+import { getTasks, addNewTask, updateTask } from '../../store/slices/tasksSlice';
 import { TaskItem, TaskPayload } from '../../models/task';
 
 interface TaskFormWrapperProps {
@@ -20,7 +20,7 @@ export const TaskFormWrapper = ({ mode }: TaskFormWrapperProps) => {
 
     useEffect(() => {
         if (status === 'idle') {
-            dispatch(fetchTasks());
+            dispatch(getTasks({ page: 1 }));
         }
     }, [status, dispatch]);
 

@@ -94,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           overflow-y-auto flex flex-col h-screen
         `}
       >
-        <div className="p-6">
+        <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <UserCard user={user} />
             <Button

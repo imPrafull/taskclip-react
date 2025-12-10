@@ -3,7 +3,7 @@ import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { TaskDetail } from './TaskDetail';
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchTasks, deleteTask } from '../../store/slices/tasksSlice';
+import { getTasks, deleteTask } from '../../store/slices/tasksSlice';
 import { fetchLists } from '../../store/slices/listsSlice';
 
 export const TaskDetailWrapper = () => {
@@ -21,7 +21,7 @@ export const TaskDetailWrapper = () => {
 
     useEffect(() => {
         if (taskStatus === 'idle') {
-            dispatch(fetchTasks());
+            dispatch(getTasks({ page: 1 }));
         }
         if (listStatus === 'idle') {
             dispatch(fetchLists());

@@ -1,10 +1,35 @@
 import { TaskItem } from "../models/task";
 import { apiService } from "./api";
 
-export async function fetchTasks(): Promise<TaskItem[]> {
-  const data = await apiService.apiFetch<TaskItem[]>("/tasks?sortBy=createdAt:asc");
+type GetTasksParams = {
+  limit?: number;
+  skip?: number;
+  sortBy?: string;
+  completed?: boolean;
+};
+
+export async function getTasks(params: GetTasksParams): Promise<TaskItem[]> {
+  const queryParams = new URLSearchParams();
+  if (params.limit) {
+    queryParams.append('limit', String(params.limit));
+  }
+  if (params.skip) {
+    queryParams.append('skip', String(params.skip));
+  }
+  if (params.sortBy) {
+    queryParams.append('sortBy', params.sortBy);
+  }
+  if (params.completed !== undefined) {
+    queryParams.append('completed', String(params.completed));
+  }
+
+  const queryString = queryParams.toString();
+  const url = `/tasks${queryString ? `?${queryString}` : ''}`;
+  
+  const data = await apiService.apiFetch<TaskItem[]>(url);
   return data;
 }
+
 
 export async function createTask(taskData: Partial<TaskItem>): Promise<TaskItem> {
   // Construct the payload as required by the backend.

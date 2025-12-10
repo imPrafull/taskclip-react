@@ -7,31 +7,31 @@ import { Sidebar } from "../../components/Sidebar";
 import { Button } from "../../components/ui/Button";
 import { TaskItem, TaskListInfo } from "../../models/task";
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchTasks } from '../../store/slices/tasksSlice';
+import { getTasks } from '../../store/slices/tasksSlice';
 import { fetchLists, addNewList } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
+import { Select } from "../../components/ui/Select";
 // import { Input } from "../../components/ui/Input";
-import { selectList, selectTaskNavItem } from '../../store/slices/filtersSlice';
+import { selectList, selectTaskNavItem, setSortBy } from '../../store/slices/filtersSlice';
 
 export const TaskDashboard = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { id: selectedTaskId } = useParams<{ id: string }>();
+  const { id: selectedTaskId } = useParams<{ id:string }>();
   const { tasks, status: taskStatus, error: taskError } = useSelector((state: RootState) => state.tasks);
   const { lists, status: listStatus, error: listError } = useSelector((state: RootState) => state.lists);
-  const { selectedListId, selectedTaskNavItemId } = useSelector((state: RootState) => state.taskfilters);
+  const { selectedListId, selectedTaskNavItemId, sortBy } = useSelector((state: RootState) => state.taskfilters);
   const { tags, status: tagsStatus, error: tagsError } = useSelector((state: RootState) => state.tags);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   // const [searchQuery, setSearchQuery] = useState("");
   const [isDetailPinned, setIsDetailPinned] = useState(true);
 
   useEffect(() => {
     if (taskStatus === 'idle') {
-      dispatch(fetchTasks());
+      dispatch(getTasks({ page: 1 }));
     }
     if (listStatus === 'idle') {
       dispatch(fetchLists());
@@ -51,58 +51,8 @@ export const TaskDashboard = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    const filterTasks = () => {
-      if (listStatus !== 'succeeded') {
-        setFilteredTasks([]);
-        return;
-      }
-
-      let filtered = tasks;
-
-      // 1. Apply Task Nav Item filter (Today, Upcoming, etc.)
-      if (selectedTaskNavItemId) {
-        switch (selectedTaskNavItemId) {
-          case 'all':
-            break;
-          case 'today': {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-            filtered = filtered.filter(task => {
-              if (!task.dueDate) return false;
-              const dueDate = new Date(task.dueDate);
-              return dueDate >= today && dueDate < tomorrow;
-            });
-            break;
-          }
-          case 'upcoming': {
-            const today = new Date();
-            const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
-            filtered = filtered.filter(task => task.dueDate && new Date(task.dueDate) < nextWeek);
-            break;
-          }
-          case 'delayed': {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Compare with the start of today
-            filtered = filtered.filter(task =>
-              task.dueDate && new Date(task.dueDate) < today && !task.completed
-            );
-            break;
-          }
-        }
-      }
-
-      // 2. Apply List filter on top of the previous result
-      if (selectedListId) {
-        filtered = filtered.filter((task) => task.list?.id === selectedListId);
-      }
-
-      setFilteredTasks(filtered);
-    };
-
-    filterTasks()
-  }, [tasks, lists, selectedListId, selectedTaskNavItemId, listStatus]);
+    dispatch(getTasks({ page: 1 }));
+  }, [sortBy, dispatch]);
 
   const handleAddNewTask = () => {
     navigate('/tasks/new');
@@ -131,7 +81,7 @@ export const TaskDashboard = (): JSX.Element => {
         selectedListId={selectedListId}
         selectedTaskNavItemId={selectedTaskNavItemId}
         onListSelect={(listId) => {
-          dispatch(selectList(listId!)); 
+          dispatch(selectList(listId!));
           setSidebarOpen(false);
         }}
         onTaskNavItemSelect={(itemId) => {
@@ -147,8 +97,8 @@ export const TaskDashboard = (): JSX.Element => {
           isMobile && showDetail && !isDetailPinned ? "hidden" : "flex"
         }`}
       >
-        <div className="p-4 lg:p-6">
-          <div className="flex items-center justify-between pb-4">
+        <div className="p-4 shadow-md">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
@@ -173,19 +123,32 @@ export const TaskDashboard = (): JSX.Element => {
                         className="w-full pl-10 pr-4 py-2"
                     />
                 </div> */}
-          </div>
-          <div className="flex items-center justify-between">
             <Button
               onClick={handleAddNewTask}
               className="flex items-center gap-2 p-6"
             >
               <PlusIcon className="w-5 h-5" />
-              <span className="font-medium mb-1">Add New Task</span>
+              <span className="font-medium mb-1">Add</span>
             </Button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 mt-4">
+              <label htmlFor="sort-by" className="text-sm font-medium text-muted-foreground">Sort by:</label>
+              <Select
+                id="sort-by"
+                value={sortBy}
+                onChange={(e) => dispatch(setSortBy(e.target.value))}
+                className="text-sm sm:text-base"
+              >
+                <option value="createdAt:asc">Oldest First</option>
+                <option value="createdAt:desc">Newest First</option>
+                {/* <option value="dueDate:asc">Due Soon</option> */}
+              </Select>
+            </div>
           </div>
         </div>
 
-        {(taskStatus === "loading" || listStatus === "loading" || tagsStatus === "loading") && (
+        {(taskStatus === "loading" && tasks.length === 0) && (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-foreground">Loading...</p>
           </div>
@@ -198,11 +161,9 @@ export const TaskDashboard = (): JSX.Element => {
           </div>
         )}
 
-        {taskStatus === "succeeded" && listStatus === "succeeded" && tagsStatus === "succeeded" && (
-          <div className="flex-1 overflow-y-auto">
-            <TaskList tasks={filteredTasks} selectedTaskId={selectedTaskId} />
-          </div>
-        )}
+        <div className="flex-1 overflow-y-auto">
+          <TaskList selectedTaskId={selectedTaskId} />
+        </div>
       </div>
 
       {showDetail &&

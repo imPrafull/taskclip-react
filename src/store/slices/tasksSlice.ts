@@ -1,22 +1,31 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TaskItem, TaskPayload } from '../../models/task';
+import { getTasks as getTasksApi } from '../../api/tasks';
 import { apiService } from '../../api/api';
 
 interface TasksState {
   tasks: TaskItem[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  page: number;
+  hasMore: boolean;
 }
 
 const initialState: TasksState = {
   tasks: [],
   status: 'idle',
   error: null,
+  page: 1,
+  hasMore: true,
 };
 
-export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async () => {
-  const response = await apiService.apiFetch<TaskItem[]>('/tasks');
-  return response;
+export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page }: { page: number }, { getState, rejectWithValue }) => {
+  const state = getState() as any;
+  const { sortBy } = state.taskfilters;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+  const response = await getTasksApi({ limit, skip, sortBy });
+  return { tasks: response, page };
 });
 
 export const addNewTask = createAsyncThunk('tasks/addNewTask', async (newTask: Omit<TaskPayload, 'id'> & { completed: boolean }) => {
@@ -65,14 +74,20 @@ const tasksSlice = createSlice({
     // All state updates for async thunks are now handled in extraReducers.
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTasks.pending, (state) => {
+    builder.addCase(getTasks.pending, (state, action) => {
         state.status = 'loading';
       })
-      .addCase(fetchTasks.fulfilled, (state, action: PayloadAction<TaskItem[]>) => {
+      .addCase(getTasks.fulfilled, (state, action: PayloadAction<{ tasks: TaskItem[], page: number }>) => {
         state.status = 'succeeded';
-        state.tasks = action.payload;
+        if (action.payload.page === 1) {
+          state.tasks = action.payload.tasks;
+        } else {
+          state.tasks = [...state.tasks, ...action.payload.tasks];
+        }
+        state.hasMore = action.payload.tasks.length > 0;
+        state.page = action.payload.page + 1;
       })
-      .addCase(fetchTasks.rejected, (state, action) => {
+      .addCase(getTasks.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || null;
       })

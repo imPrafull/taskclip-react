@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "../../lib/utils";
 
 interface SelectProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -8,7 +9,11 @@ interface SelectProps
 const Select: React.FC<SelectProps> = ({ className, children, ...props }) => {
   return (
     <select
-      className={`w-full px-3 py-2 bg-background border border-border rounded-lg text-base sm:text-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f] ${className}`}
+      className={cn(
+        "w-full px-3 py-2 bg-background border border-border rounded-lg shadow-sm text-foreground placeholder:text-muted-foreground font-medium focus:outline-none focus:ring-2 focus:ring-[#58419f]",
+        "text-base sm:text-lg", // Default text sizes
+        className
+      )}
       {...props}
     >
       {children}
