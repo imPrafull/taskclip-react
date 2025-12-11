@@ -93,11 +93,15 @@ export const TaskDashboard = (): JSX.Element => {
       />
 
       <div
-        className={`flex-1 flex flex-col min-w-0 ${
-          isMobile && showDetail && !isDetailPinned ? "hidden" : "flex"
+        className={`flex flex-col min-w-0 ${
+          showDetail && isDetailPinned && !isMobile ? 'basis-3/5' : 'flex-1'
+        } ${
+          isMobile && showDetail && !isDetailPinned
+            ? 'hidden'
+            : ''
         }`}
       >
-        <div className="p-4 shadow-md">
+        <div className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button
@@ -131,14 +135,13 @@ export const TaskDashboard = (): JSX.Element => {
               <span className="font-medium mb-1">Add</span>
             </Button>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-end">
             <div className="flex items-center gap-2 mt-4">
-              <label htmlFor="sort-by" className="text-sm font-medium text-muted-foreground">Sort by:</label>
               <Select
                 id="sort-by"
                 value={sortBy}
                 onChange={(e) => dispatch(setSortBy(e.target.value))}
-                className="text-sm sm:text-base"
+                className="text-sm sm:text-sm px-2 py-1"
               >
                 <option value="createdAt:asc">Oldest First</option>
                 <option value="createdAt:desc">Newest First</option>
@@ -168,8 +171,8 @@ export const TaskDashboard = (): JSX.Element => {
 
       {showDetail &&
         (isDetailPinned && !isMobile ? (
-          <div className="flex-1 min-w-0">
-            <div className="h-full overflow-hidden pt-12 pr-4 pb-12 pl-0 max-w-lg">
+          <div className="flex-shrink-0 flex-grow-0 basis-2/5 max-w-lg">
+            <div className="h-full overflow-hidden pt-12 pr-4 pb-12 pl-0">
               <Outlet
                 context={{
                   isMobile,
