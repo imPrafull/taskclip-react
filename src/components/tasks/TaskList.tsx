@@ -12,17 +12,20 @@ export const TaskList: React.FC<TaskListProps> = ({ selectedTaskId }) => {
   const dispatch: AppDispatch = useDispatch();
   const { tasks, status, hasMore, page } = useSelector((state: RootState) => state.tasks);
 
+  const loadingRef = useRef(false);
   const observer = useRef<IntersectionObserver>();
+
   const lastTaskElementRef = useCallback((node: any) => {
     if (status === 'loading') return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        dispatch(getTasks({ page }));
+      if (entries[0].isIntersecting && hasMore && !loadingRef.current) {
+        loadingRef.current = true;
+        dispatch(getTasks({ page, loadingRef }));
       }
     });
     if (node) observer.current.observe(node);
-  }, [status, hasMore, dispatch, page]);
+  }, [status, hasMore, dispatch, page]); // loadingRef is stable, no need to add
 
   if (tasks.length === 0 && status !== 'loading') {
     return (

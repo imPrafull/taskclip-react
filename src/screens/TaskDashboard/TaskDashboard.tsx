@@ -5,9 +5,9 @@ import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { TaskList } from "../../components/tasks/TaskList";
 import { Sidebar } from "../../components/Sidebar";
 import { Button } from "../../components/ui/Button";
-import { TaskItem, TaskListInfo } from "../../models/task";
+import { TaskListInfo } from "../../models/task";
 import { RootState, AppDispatch } from '../../store/store';
-import { getTasks } from '../../store/slices/tasksSlice';
+import { getTasks, resetTasks } from '../../store/slices/tasksSlice';
 import { fetchLists, addNewList } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
 import { Select } from "../../components/ui/Select";
@@ -30,16 +30,13 @@ export const TaskDashboard = (): JSX.Element => {
   const [isDetailPinned, setIsDetailPinned] = useState(true);
 
   useEffect(() => {
-    if (taskStatus === 'idle') {
-      dispatch(getTasks({ page: 1 }));
-    }
     if (listStatus === 'idle') {
       dispatch(fetchLists());
     }
     if (tagsStatus === 'idle') {
       dispatch(fetchTags());
     }
-  }, [taskStatus, listStatus, tagsStatus, dispatch]);
+  }, [listStatus, tagsStatus, dispatch]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -51,7 +48,8 @@ export const TaskDashboard = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    dispatch(getTasks({ page: 1 }));
+    dispatch(resetTasks());
+    dispatch(getTasks({ page: 1, sort: sortBy }));
   }, [sortBy, dispatch]);
 
   const handleAddNewTask = () => {
@@ -145,7 +143,7 @@ export const TaskDashboard = (): JSX.Element => {
               >
                 <option value="createdAt:asc">Oldest First</option>
                 <option value="createdAt:desc">Newest First</option>
-                {/* <option value="dueDate:asc">Due Soon</option> */}
+                <option value="dueDate:asc">Due Soon</option>
               </Select>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TaskItem, TaskPayload } from '../../models/task';
+import { MutableRefObject } from 'react';
 import { getTasks as getTasksApi } from '../../api/tasks';
 import { apiService } from '../../api/api';
 
@@ -19,13 +20,23 @@ const initialState: TasksState = {
   hasMore: true,
 };
 
-export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page }: { page: number }, { getState, rejectWithValue }) => {
-  const state = getState() as any;
-  const { sortBy } = state.taskfilters;
-  const limit = 10;
-  const skip = (page - 1) * limit;
-  const response = await getTasksApi({ limit, skip, sortBy });
-  return { tasks: response, page };
+interface GetTasksParams {
+  page: number;
+  sort?: string;
+  loadingRef?: MutableRefObject<boolean>;
+}
+
+export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, loadingRef }: GetTasksParams, { getState, rejectWithValue }) => {
+  try {
+    const state = getState() as any;
+    const sortByValue = sort ?? state.taskfilters.sortBy;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    const response = await getTasksApi({ limit, skip, sortBy: sortByValue });
+    return { tasks: response, page };
+  } finally {
+    if (loadingRef) loadingRef.current = false;
+  }
 });
 
 export const addNewTask = createAsyncThunk('tasks/addNewTask', async (newTask: Omit<TaskPayload, 'id'> & { completed: boolean }) => {
@@ -71,7 +82,10 @@ const tasksSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    // All state updates for async thunks are now handled in extraReducers.
+    resetTasks: (state) => {
+      state.tasks = [];
+      state.page = 1;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(getTasks.pending, (state, action) => {
@@ -107,7 +121,6 @@ const tasksSlice = createSlice({
 });
 
 export const {
-  // updateTask is now an async thunk, not a slice action.
-  // It is exported above.
+  resetTasks
 } = tasksSlice.actions;
 export default tasksSlice.reducer;
