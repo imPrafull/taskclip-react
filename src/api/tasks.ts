@@ -6,6 +6,8 @@ type GetTasksParams = {
   skip?: number;
   sortBy?: string;
   completed?: boolean;
+  listId?: string | null;
+  due?: string | null;
 };
 
 export async function getTasks(params: GetTasksParams): Promise<TaskItem[]> {
@@ -18,6 +20,12 @@ export async function getTasks(params: GetTasksParams): Promise<TaskItem[]> {
   }
   if (params.sortBy) {
     queryParams.append('sortBy', params.sortBy);
+  }
+  if (params.listId) {
+    queryParams.append('listId', params.listId);
+  }
+  if (params.due && params.due !== 'all') {
+    queryParams.append('due', params.due);
   }
   if (params.completed !== undefined) {
     queryParams.append('completed', String(params.completed));

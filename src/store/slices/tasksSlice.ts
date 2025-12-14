@@ -24,15 +24,22 @@ interface GetTasksParams {
   page: number;
   sort?: string;
   loadingRef?: MutableRefObject<boolean>;
+  listId?: string | null;
+  due?: string | null;
 }
-
-export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, loadingRef }: GetTasksParams, { getState, rejectWithValue }) => {
+export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, loadingRef, listId, due }: GetTasksParams, { getState, rejectWithValue }) => {
   try {
     const state = getState() as any;
     const sortByValue = sort ?? state.taskfilters.sortBy;
     const limit = 10;
     const skip = (page - 1) * limit;
-    const response = await getTasksApi({ limit, skip, sortBy: sortByValue });
+    // Prefer explicit listId/due params, otherwise fall back to currently selected values in filters
+    const effectiveListId = listId ?? state.taskfilters.selectedListId ?? null;
+    const effectiveDue = due ?? state.taskfilters.selectedTaskNavItemId ?? null;
+    const apiParams: any = { limit, skip, sortBy: sortByValue };
+    if (effectiveListId) apiParams.listId = effectiveListId;
+    if (effectiveDue && effectiveDue !== 'all') apiParams.due = effectiveDue;
+    const response = await getTasksApi(apiParams);
     return { tasks: response, page };
   } finally {
     if (loadingRef) loadingRef.current = false;

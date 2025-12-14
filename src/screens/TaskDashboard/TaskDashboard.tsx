@@ -47,10 +47,12 @@ export const TaskDashboard = (): JSX.Element => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Fetch tasks when selected list, selected task nav item, or sort changes
   useEffect(() => {
     dispatch(resetTasks());
-    dispatch(getTasks({ page: 1, sort: sortBy }));
-  }, [sortBy, dispatch]);
+    const dueParam = selectedTaskNavItemId && selectedTaskNavItemId !== 'all' ? selectedTaskNavItemId : undefined;
+    dispatch(getTasks({ page: 1, sort: sortBy, listId: selectedListId, due: dueParam }));
+  }, [selectedListId, selectedTaskNavItemId, sortBy, dispatch]);
 
   const handleAddNewTask = () => {
     navigate('/tasks/new');
