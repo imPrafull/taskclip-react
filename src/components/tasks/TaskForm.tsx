@@ -1,10 +1,10 @@
 import { ArrowLeftIcon, XIcon, PinIcon, PinOffIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { TaskItem, TaskPayload } from "../../models/task";
+import { TaskItem, TaskPayload, TaskStatus } from "../../models/task";
 import { Button } from "../ui/Button";
 import { Textarea } from "../ui/Textarea";
 import { Input } from "../ui/Input";
-import { Select } from "../ui/Select";
+import { Select } from "../ui/select";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchLists } from "../../store/slices/listsSlice";
@@ -21,21 +21,21 @@ type TaskFormProps = {
 
 export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMobile, mode, isPinned, onPinToggle }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { lists, status } = useSelector((state: RootState) => state.lists);
+  const { lists, status: listsStatus } = useSelector((state: RootState) => state.lists);
 
   const [title, setTitle] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
   const [listId, setListId] = useState(task?.list?.id || "");
   const [dueDate, setDueDate] = useState(task?.dueDate || "");
+  const [status, setStatus] = useState<TaskStatus>(task?.status ?? TaskStatus.Todo);
   const [subtasks, setSubtasks] = useState(task?.subtasks || []);
-  const [newSubtask, setNewSubtask] = useState("");
   const [titleError, setTitleError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "idle") {
+    if (listsStatus === "idle") {
       dispatch(fetchLists());
     }
-  }, [status, dispatch]);
+  }, [listsStatus, dispatch]);
 
   useEffect(() => {
     setTitle(task?.title || "");
@@ -85,6 +85,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
       list: listId || null, // The backend expects the ID in the 'list' key
       dueDate,
       subtasks,
+      status,
     };
 
     if (mode === "edit" && task) {
@@ -151,7 +152,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
         </div>
 
         <div className="space-y-1">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <h4 className="text-base sm:text-lg font-bold text-muted-foreground mb-1">List</h4>
               <Select
@@ -176,6 +177,15 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
                 onChange={(e) => setDueDate(e.target.value)}
                 className="w-full"
               />
+            </div>
+            <div>
+              <h4 className="text-base sm:text-lg font-bold text-muted-foreground mb-1">Status</h4>
+                <Select className="capitalize" value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)}>
+                  <option value={TaskStatus.Todo}>{TaskStatus.Todo}</option>
+                  <option value={TaskStatus.InProgress}>{TaskStatus.InProgress}</option>
+                  <option value={TaskStatus.OnHold}>{TaskStatus.OnHold}</option>
+                  <option value={TaskStatus.Done}>{TaskStatus.Done}</option>
+                </Select>
             </div>
           </div>
         </div>

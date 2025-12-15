@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { TaskItem, TaskPayload } from '../../models/task';
+import { TaskItem, TaskPayload, TaskStatus } from '../../models/task';
 import { MutableRefObject } from 'react';
 import { getTasks as getTasksApi } from '../../api/tasks';
 import { apiService } from '../../api/api';
@@ -27,7 +27,7 @@ interface GetTasksParams {
   listId?: string | null;
   due?: string | null;
 }
-export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, loadingRef, listId, due }: GetTasksParams, { getState, rejectWithValue }) => {
+export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, loadingRef, listId, due }: GetTasksParams, { getState }) => {
   try {
     const state = getState() as any;
     const sortByValue = sort ?? state.taskfilters.sortBy;
@@ -46,10 +46,11 @@ export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, 
   }
 });
 
-export const addNewTask = createAsyncThunk('tasks/addNewTask', async (newTask: Omit<TaskPayload, 'id'> & { completed: boolean }) => {
+export const addNewTask = createAsyncThunk('tasks/addNewTask', async (newTask: Omit<TaskPayload, 'id'> & { status?: TaskStatus }) => {
+  const payload = { ...newTask, status: newTask.status ?? TaskStatus.Todo };
   const response = await apiService.apiFetch<TaskItem>('/tasks', {
     method: 'POST',
-    body: JSON.stringify(newTask),
+    body: JSON.stringify(payload),
   });
   return response;
 });
@@ -95,7 +96,7 @@ const tasksSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(getTasks.pending, (state, action) => {
+    builder.addCase(getTasks.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(getTasks.fulfilled, (state, action: PayloadAction<{ tasks: TaskItem[], page: number }>) => {

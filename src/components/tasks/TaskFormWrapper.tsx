@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { TaskForm } from './TaskForm';
 import { RootState, AppDispatch } from '../../store/store';
 import { getTasks, addNewTask, updateTask } from '../../store/slices/tasksSlice';
-import { TaskItem, TaskPayload } from '../../models/task';
+import { TaskItem, TaskPayload, TaskStatus } from '../../models/task';
 
 interface TaskFormWrapperProps {
     mode: 'create' | 'edit';
@@ -38,9 +38,15 @@ export const TaskFormWrapper = ({ mode }: TaskFormWrapperProps) => {
     const handleSave = async (taskData: TaskPayload) => {
         try {
             if (mode === 'create') {
-                // When creating a task, it's not completed yet.
-                // The `addNewTask` thunk expects the `completed` property.
-                const taskToCreate = { ...taskData, completed: false };
+                // When creating a task, default status is 'todo'.
+                const taskToCreate: Omit<TaskPayload, 'id'> & { status?: TaskStatus } = {
+                    title: taskData.title,
+                    description: taskData.description,
+                    list: taskData.list ?? null,
+                    dueDate: taskData.dueDate,
+                    subtasks: taskData.subtasks,
+                    status: TaskStatus.Todo,
+                };
                 const newTask = await dispatch(addNewTask(taskToCreate)).unwrap();
                 if (onTaskCreated && newTask) {
                     onTaskCreated(newTask.id);

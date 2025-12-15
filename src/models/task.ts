@@ -18,6 +18,13 @@ export type TaskListInfo = {
   count: number;
 };
 
+export enum TaskStatus {
+  Todo = 'todo',
+  InProgress = 'in progress',
+  OnHold = 'on hold',
+  Done = 'done',
+}
+
 export type TaskItem = {
   id: string;
   title: string;
@@ -26,7 +33,7 @@ export type TaskItem = {
   list?: TaskListInfo;
   subtasks?: Subtask[];
   tags?: Tag[];
-  completed: boolean;
+  status: TaskStatus;
 };
 
 // Type for the payload when creating or updating a task
@@ -36,5 +43,6 @@ export type TaskPayload = {
   description: string;
   list: string | null; // list ID
   dueDate: string;
+  status?: TaskStatus;
   subtasks?: Subtask[];
 };

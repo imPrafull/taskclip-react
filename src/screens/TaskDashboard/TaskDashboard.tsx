@@ -1,4 +1,4 @@
-import { MenuIcon, PlusIcon, SearchIcon } from "lucide-react";
+import { MenuIcon, PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
@@ -10,7 +10,7 @@ import { RootState, AppDispatch } from '../../store/store';
 import { getTasks, resetTasks } from '../../store/slices/tasksSlice';
 import { fetchLists, addNewList } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
-import { Select } from "../../components/ui/Select";
+import { Select } from "../../components/ui/select";
 // import { Input } from "../../components/ui/Input";
 import { selectList, selectTaskNavItem, setSortBy } from '../../store/slices/filtersSlice';
 
@@ -22,7 +22,7 @@ export const TaskDashboard = (): JSX.Element => {
   const { tasks, status: taskStatus, error: taskError } = useSelector((state: RootState) => state.tasks);
   const { lists, status: listStatus, error: listError } = useSelector((state: RootState) => state.lists);
   const { selectedListId, selectedTaskNavItemId, sortBy } = useSelector((state: RootState) => state.taskfilters);
-  const { tags, status: tagsStatus, error: tagsError } = useSelector((state: RootState) => state.tags);
+  const { status: tagsStatus, error: tagsError } = useSelector((state: RootState) => state.tags);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -89,7 +89,7 @@ export const TaskDashboard = (): JSX.Element => {
         }}
         lists={lists}
         onListCreated={handleListCreated}
-        tags={tags}
+        
       />
 
       <div
@@ -129,7 +129,7 @@ export const TaskDashboard = (): JSX.Element => {
                 </div> */}
             <Button
               onClick={handleAddNewTask}
-              className="flex items-center gap-2 p-6"
+              className="flex items-center gap-2 p-4"
             >
               <PlusIcon className="w-5 h-5" />
               <span className="font-medium mb-1">Add</span>

@@ -1,12 +1,11 @@
-import { ChevronRightIcon, LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon, AlertTriangleIcon, ListTodoIcon, ClockAlertIcon, ClockArrowUpIcon } from "lucide-react";
+import { LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon, AlertTriangleIcon, ListTodoIcon, ClockAlertIcon, ClockArrowUpIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../api/auth";
 import { Button } from "./ui/Button";
-import { Tag as TagType, TaskListInfo } from "../models/task";
+import { TaskListInfo } from "../models/task";
 import { AddListModal } from "./AddListModal";
 import { AddTagModal } from "./AddTagModal";
-import Tag from "./ui/Tag";
 import { useTheme } from "../hooks/useTheme";
 import { storageService, USER_KEY } from "../lib/storage";
 import { User } from "../models/auth";
@@ -21,7 +20,6 @@ type SidebarProps = {
   onTaskNavItemSelect: (itemId: string | null) => void;
   lists: TaskListInfo[];
   onListCreated: (newList: TaskListInfo) => void;
-  tags: TagType[];
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -33,7 +31,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onTaskNavItemSelect,
   lists,
   onListCreated,
-  tags,
 }) => {
   const { theme, toggleTheme } = useTheme();
 
