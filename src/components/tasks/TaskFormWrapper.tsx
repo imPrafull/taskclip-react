@@ -45,7 +45,7 @@ export const TaskFormWrapper = ({ mode }: TaskFormWrapperProps) => {
                     list: taskData.list ?? null,
                     dueDate: taskData.dueDate,
                     subtasks: taskData.subtasks,
-                    status: TaskStatus.Todo,
+                    status: taskData.status ?? TaskStatus.Todo,
                 };
                 const newTask = await dispatch(addNewTask(taskToCreate)).unwrap();
                 if (onTaskCreated && newTask) {

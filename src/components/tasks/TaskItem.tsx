@@ -49,9 +49,16 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, selectedTaskId }) => {
   const borderColor = task.list?.color || 'hsl(220 8% 91%)';
 
   return (
-    <button
-      key={task.id}
+    <div
       onClick={handleTaskSelect}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleTaskSelect();
+        }
+      }}
       style={{ borderLeftColor: borderColor }}
       className={`
         w-full text-left p-4 transition-colors flex items-center justify-between border-l-4
@@ -59,33 +66,14 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, selectedTaskId }) => {
       `}
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <input
-          type="checkbox"
-          checked={task.status === TaskStatus.Done}
-          onChange={(e) => e.stopPropagation()}
-          className="w-5 h-5 text-foreground cursor-pointer"
-        />
-        <select
-          value={task.status}
-          onChange={(e) => {
-            e.stopPropagation();
-            const newStatus = e.target.value as TaskStatus;
-            dispatch(updateTask({ id: task.id, status: newStatus } as any)).catch((err) => console.error(err));
-          }}
-          className="capitalize text-sm bg-transparent text-muted-foreground border border-border rounded px-2 py-0.5 mr-2"
-        >
-          <option value={TaskStatus.Todo}>{TaskStatus.Todo}</option>
-          <option value={TaskStatus.InProgress}>{TaskStatus.InProgress}</option>
-          <option value={TaskStatus.OnHold}>{TaskStatus.OnHold}</option>
-          <option value={TaskStatus.Done}>{TaskStatus.Done}</option>
-        </select>
         <div className="flex-1 min-w-0">
           <p className="text-foreground font-medium truncate">{task.title}</p>
         </div>
       </div>
+      
       {task.dueDate && (
         <div
-          className={cn("text-sm ml-4 flex-shrink-0 flex items-center gap-1.5",
+          className={cn("text-sm mx-4 flex-shrink-0 flex items-center gap-1.5",
             isUrgent ? "text-destructive" : "text-muted-foreground"
           )}
         >
@@ -93,6 +81,23 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, selectedTaskId }) => {
           {dateString}
         </div>
       )}
-    </button>
+
+      <select
+        value={task.status}
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        onChange={(e) => {
+          e.stopPropagation();
+          const newStatus = e.target.value as TaskStatus;
+          dispatch(updateTask({ id: task.id, status: newStatus } as any)).catch((err) => console.error(err));
+        }}
+        className="capitalize text-sm bg-transparent text-muted-foreground border border-border rounded px-2 py-0.5"
+      >
+        <option value={TaskStatus.Todo}>{TaskStatus.Todo}</option>
+        <option value={TaskStatus.InProgress}>{TaskStatus.InProgress}</option>
+        <option value={TaskStatus.OnHold}>{TaskStatus.OnHold}</option>
+        <option value={TaskStatus.Done}>{TaskStatus.Done}</option>
+      </select>
+    </div>
   );
 };
