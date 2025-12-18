@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, PinIcon, PinOffIcon, XIcon } from "lucide-react";
 import React from "react";
-import { TaskItem, TaskStatus } from "../../models/task";
+import { TaskItem, TaskStatus, statusOptionClassMap, statusBadgeClassMap } from "../../models/task";
 import { Button } from "../ui/Button";
 
 type TaskDetailProps = {
@@ -122,7 +122,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
                 </span>
               </div>
               <div className="flex grow shrink-0 basis-0 items-center gap-2">
-                <span className="text-lg text-foreground capitalize">
+                <span className={`inline-flex items-center px-4 py-0.5 pb-1 mt-2 text-base rounded-full font-medium capitalize ${statusBadgeClassMap[task.status ?? TaskStatus.Todo]}`}>
                   {task.status ?? TaskStatus.Todo}
                 </span>
               </div>

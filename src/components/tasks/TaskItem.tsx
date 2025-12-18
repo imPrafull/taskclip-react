@@ -3,7 +3,7 @@ import React from "react";
 import { Calendar } from "lucide-react";
 import { cn } from "../../lib/utils";
 
-import { TaskItem as Task, TaskStatus } from "../../models/task";
+import { TaskItem as Task, TaskStatus, statusOptionClassMap } from "../../models/task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { updateTask } from "../../store/slices/tasksSlice";
@@ -82,22 +82,24 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, selectedTaskId }) => {
         </div>
       )}
 
-      <select
-        value={task.status}
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
-        onChange={(e) => {
-          e.stopPropagation();
-          const newStatus = e.target.value as TaskStatus;
-          dispatch(updateTask({ id: task.id, status: newStatus } as any)).catch((err) => console.error(err));
-        }}
-        className="capitalize text-sm bg-transparent text-muted-foreground border border-border rounded px-2 py-0.5"
-      >
-        <option value={TaskStatus.Todo}>{TaskStatus.Todo}</option>
-        <option value={TaskStatus.InProgress}>{TaskStatus.InProgress}</option>
-        <option value={TaskStatus.OnHold}>{TaskStatus.OnHold}</option>
-        <option value={TaskStatus.Done}>{TaskStatus.Done}</option>
-      </select>
+      <div className="flex items-center gap-2">
+        <select
+          value={task.status}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => {
+            e.stopPropagation();
+            const newStatus = e.target.value as TaskStatus;
+            dispatch(updateTask({ id: task.id, status: newStatus } as any)).catch((err) => console.error(err));
+          }}
+          className="capitalize text-sm bg-transparent text-muted-foreground border border-border rounded px-2 py-0.5"
+        >
+          <option className={statusOptionClassMap[TaskStatus.Todo]} value={TaskStatus.Todo}>{TaskStatus.Todo}</option>
+          <option className={statusOptionClassMap[TaskStatus.InProgress]} value={TaskStatus.InProgress}>{TaskStatus.InProgress}</option>
+          <option className={statusOptionClassMap[TaskStatus.OnHold]} value={TaskStatus.OnHold}>{TaskStatus.OnHold}</option>
+          <option className={statusOptionClassMap[TaskStatus.Done]} value={TaskStatus.Done}>{TaskStatus.Done}</option>
+        </select>
+      </div>
     </div>
   );
 };
