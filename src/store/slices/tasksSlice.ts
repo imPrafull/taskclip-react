@@ -26,8 +26,9 @@ interface GetTasksParams {
   loadingRef?: MutableRefObject<boolean>;
   listId?: string | null;
   due?: string | null;
+  status?: string | null;
 }
-export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, loadingRef, listId, due }: GetTasksParams, { getState }) => {
+export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, loadingRef, listId, due, status }: GetTasksParams, { getState }) => {
   try {
     const state = getState() as any;
     const sortByValue = sort ?? state.taskfilters.sortBy;
@@ -36,9 +37,11 @@ export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, 
     // Prefer explicit listId/due params, otherwise fall back to currently selected values in filters
     const effectiveListId = listId ?? state.taskfilters.selectedListId ?? null;
     const effectiveDue = due ?? state.taskfilters.selectedTaskNavItemId ?? null;
+    const effectiveStatus = status ?? state.taskfilters.selectedStatus ?? null;
     const apiParams: any = { limit, skip, sortBy: sortByValue };
     if (effectiveListId) apiParams.listId = effectiveListId;
     if (effectiveDue && effectiveDue !== 'all') apiParams.due = effectiveDue;
+    if (effectiveStatus && effectiveStatus !== 'all') apiParams.status = effectiveStatus;
     const response = await getTasksApi(apiParams);
     return { tasks: response, page };
   } finally {

@@ -1,4 +1,4 @@
-import { MenuIcon, PlusIcon } from "lucide-react";
+import { MenuIcon, PlusIcon, ArrowDownUpIcon, ListFilterIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
@@ -12,7 +12,8 @@ import { fetchLists, addNewList } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
 import { Select } from "../../components/ui/select";
 // import { Input } from "../../components/ui/Input";
-import { selectList, selectTaskNavItem, setSortBy } from '../../store/slices/filtersSlice';
+import { selectList, selectTaskNavItem, setSortBy, setStatus } from '../../store/slices/filtersSlice';
+import { TaskStatus } from '../../models/task';
 
 export const TaskDashboard = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
@@ -21,7 +22,7 @@ export const TaskDashboard = (): JSX.Element => {
   const { id: selectedTaskId } = useParams<{ id:string }>();
   const { tasks, status: taskStatus, error: taskError } = useSelector((state: RootState) => state.tasks);
   const { lists, status: listStatus, error: listError } = useSelector((state: RootState) => state.lists);
-  const { selectedListId, selectedTaskNavItemId, sortBy } = useSelector((state: RootState) => state.taskfilters);
+  const { selectedListId, selectedTaskNavItemId, sortBy, selectedStatus } = useSelector((state: RootState) => state.taskfilters);
   const { status: tagsStatus, error: tagsError } = useSelector((state: RootState) => state.tags);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -51,8 +52,9 @@ export const TaskDashboard = (): JSX.Element => {
   useEffect(() => {
     dispatch(resetTasks());
     const dueParam = selectedTaskNavItemId && selectedTaskNavItemId !== 'all' ? selectedTaskNavItemId : undefined;
-    dispatch(getTasks({ page: 1, sort: sortBy, listId: selectedListId, due: dueParam }));
-  }, [selectedListId, selectedTaskNavItemId, sortBy, dispatch]);
+    const statusParam = selectedStatus && selectedStatus !== 'all' ? selectedStatus : undefined;
+    dispatch(getTasks({ page: 1, sort: sortBy, listId: selectedListId, due: dueParam, status: statusParam }));
+  }, [selectedListId, selectedTaskNavItemId, sortBy, selectedStatus, dispatch]);
 
   const handleAddNewTask = () => {
     navigate('/tasks/new');
@@ -72,6 +74,8 @@ export const TaskDashboard = (): JSX.Element => {
   useEffect(() => {
     if (isMobile) setIsDetailPinned(false);
   }, [isMobile]);
+
+  const formatStatusLabel = (key: string) => key.replace(/([A-Z])/g, ' $1').trim();
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -113,8 +117,8 @@ export const TaskDashboard = (): JSX.Element => {
                 <MenuIcon className="w-6 h-6 text-foreground" />
               </Button>
               <div className="flex items-center">
-                <img src="/logo.png" alt="TaskClip Logo" className="w-8 h-8" />
-                <h2 className="text-4xl font-bold text-foreground ml-[-6px]">askclip</h2>
+                <img src="/logo.png" alt="TaskClip Logo" className="w-7 h-7 pb-[2px]" />
+                <h3 className="text-2xl font-bold text-foreground ml-[-7px]">askclip</h3>
               </div>
             </div>
             {/* <div className="relative flex-1 max-w-md ml-4">
@@ -129,24 +133,45 @@ export const TaskDashboard = (): JSX.Element => {
                 </div> */}
             <Button
               onClick={handleAddNewTask}
-              className="flex items-center gap-2 p-4"
+              className="flex items-center gap-2 py-2 px-4 text-base"
+              size="sm"
             >
-              <PlusIcon className="w-5 h-5" />
+              <PlusIcon className="w-4 h-4" />
               <span className="font-medium mb-1">Add</span>
             </Button>
           </div>
           <div className="flex items-center justify-end">
             <div className="flex items-center gap-2 mt-4">
-              <Select
-                id="sort-by"
-                value={sortBy}
-                onChange={(e) => dispatch(setSortBy(e.target.value))}
-                className="text-sm sm:text-sm px-2 py-1"
-              >
-                <option value="createdAt:asc">Oldest First</option>
-                <option value="createdAt:desc">Newest First</option>
-                <option value="dueDate:asc">Due Soon</option>
-              </Select>
+              <div className="relative">
+                <ListFilterIcon className="w-4 h-4 text-accent-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Select
+                  id="status-filter"
+                  value={selectedStatus}
+                  onChange={(e) => dispatch(setStatus(e.target.value as TaskStatus | 'all'))}
+                  className="text-sm sm:text-sm px-2 py-1 pl-8 pr-8 appearance-none min-w-26"
+                >
+                  <option value="all">Status</option>
+                  {(Object.keys(TaskStatus) as Array<keyof typeof TaskStatus>).map((k) => (
+                    <option key={k} value={TaskStatus[k]}>
+                      {formatStatusLabel(k)}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              
+              <div className="relative">
+                <ArrowDownUpIcon className="w-4 h-4 text-accent-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Select
+                  id="sort-by"
+                  value={sortBy}
+                  onChange={(e) => dispatch(setSortBy(e.target.value))}
+                  className="text-sm sm:text-sm px-2 py-1 pl-8 pr-8 min-w-26 appearance-none"
+                >
+                  <option value="createdAt:asc">Oldest First</option>
+                  <option value="createdAt:desc">Newest First</option>
+                  <option value="dueDate:asc">Due Soon</option>
+                </Select>
+              </div>
             </div>
           </div>
         </div>

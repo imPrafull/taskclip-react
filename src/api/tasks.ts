@@ -8,6 +8,7 @@ type GetTasksParams = {
   completed?: boolean;
   listId?: string | null;
   due?: string | null;
+  status?: string | null;
 };
 
 export async function getTasks(params: GetTasksParams): Promise<TaskItem[]> {
@@ -27,8 +28,8 @@ export async function getTasks(params: GetTasksParams): Promise<TaskItem[]> {
   if (params.due && params.due !== 'all') {
     queryParams.append('due', params.due);
   }
-  if (params.completed !== undefined) {
-    queryParams.append('completed', String(params.completed));
+  if (params.status && params.status !== 'all') {
+    queryParams.append('status', params.status);
   }
 
   const queryString = queryParams.toString();
