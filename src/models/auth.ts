@@ -22,5 +22,6 @@ export type ApiUser = {
 
 export type AuthApiResponse = {
   user: ApiUser;
-  token: string;
+  accessToken: string;
+  refreshToken?: string;
 };

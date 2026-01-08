@@ -1,5 +1,5 @@
 import { AuthApiResponse, AuthResponse, User } from "../models/auth";
-import { storageService, USER_KEY, TOKEN_KEY } from "../lib/storage";
+import { storageService, USER_KEY, REFRESH_TOKEN_KEY } from "../lib/storage";
 import { apiService } from "./api";
 
 export const authService = {
@@ -19,7 +19,11 @@ export const authService = {
 
       const user: User = { id: data.user.id, name: data.user.name, email: data.user.email };
       storageService.setItem(USER_KEY, JSON.stringify(user));
-      storageService.setItem(TOKEN_KEY, data.token);
+      // Store access token in memory and refresh token in storage (or rely on cookie)
+      apiService.setAccessToken((data as any).accessToken);
+      if ((data as any).refreshToken) {
+        storageService.setItem(REFRESH_TOKEN_KEY, (data as any).refreshToken);
+      }
       return { success: true, user };
     } catch (error) {
       return { success: false, error: (error as Error).message || "An unexpected error occurred." };
@@ -37,7 +41,10 @@ export const authService = {
       });
       const user: User = { id: data.user.id, name: data.user.name, email: data.user.email };
       storageService.setItem(USER_KEY, JSON.stringify(user));
-      storageService.setItem(TOKEN_KEY, data.token);
+      apiService.setAccessToken((data as any).accessToken);
+      if ((data as any).refreshToken) {
+        storageService.setItem(REFRESH_TOKEN_KEY, (data as any).refreshToken);
+      }
       return { success: true, user };
     } catch (error) {
       return { success: false, error: (error as Error).message || "An unexpected error occurred." };
@@ -45,17 +52,23 @@ export const authService = {
   },
 
   logout: async () => {
-    const token = apiService.getToken();
-    if (token) {
-      try {
-        // We don't need to await this or handle its response for the user's logout flow.
-        apiService.apiFetch("/users/logout", { method: "POST" });
-        storageService.removeItem(USER_KEY);
-        storageService.removeItem(TOKEN_KEY);
-      } catch (error) {
-        console.error("Logout API call failed:", error);
-      }
+    // Use refresh token for logout if available, otherwise rely on cookie-based logout
+    const refreshToken = storageService.getItem(REFRESH_TOKEN_KEY);
+    try {
+      await apiService.apiFetch("/users/logout", {
+        method: "POST",
+        body: JSON.stringify({ refreshToken }),
+        // make sure cookies are sent if backend expects them
+        credentials: "include",
+      });
+    } catch (error) {
+      // still clear local state even if API call fails
+      console.error("Logout API call failed:", error);
     }
+
+    apiService.setAccessToken(null);
+    storageService.removeItem(USER_KEY);
+    storageService.removeItem(REFRESH_TOKEN_KEY);
   },
 
   getCurrentUser: (): User | null => {
