@@ -1,4 +1,5 @@
-import { storageService, REFRESH_TOKEN_KEY } from "../lib/storage";
+import { storageService, REFRESH_TOKEN_KEY, USER_KEY } from "../lib/storage";
+import { authService } from "./auth";
 
 export const API_BASE_URL = "http://localhost:3000";
 
@@ -50,8 +51,12 @@ export const apiService = {
 
           return newAccess || null;
         } catch (err) {
-          this.setAccessToken(null);
+          apiService.setAccessToken(null);
+          storageService.removeItem(USER_KEY);
           storageService.removeItem(REFRESH_TOKEN_KEY);
+          if (typeof window !== "undefined") {
+            window.location.href = "/";
+          }
           return null;
         } finally {
           this._refreshPromise = null;
@@ -84,7 +89,7 @@ export const apiService = {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
           ...options,
           headers,
-          credentials: options.credentials ?? "same-origin",
+          credentials: options.credentials ?? "include",
         });
 
         const text = await response.text();

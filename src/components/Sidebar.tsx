@@ -7,6 +7,7 @@ import { TaskListInfo } from "../models/task";
 import { AddListModal } from "./AddListModal";
 import { AddTagModal } from "./AddTagModal";
 import { useTheme } from "../hooks/useTheme";
+import { getTaskCounts } from "../api/tasks";
 import { storageService, USER_KEY } from "../lib/storage";
 import { User } from "../models/auth";
 import UserCard from "./UserCard";
@@ -34,13 +35,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { theme, toggleTheme } = useTheme();
 
+  const [counts, setCounts] = useState<{ all: number; today: number; upcoming: number; delayed: number }>({ all: 0, today: 0, upcoming: 0, delayed: 0 });
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const data = await getTaskCounts();
+        if (mounted && data) setCounts(data);
+      } catch (e) {
+        // ignore errors for now
+      }
+    };
+    load();
+    return () => { mounted = false; };
+  }, []);
+
   const taskNavItems = [
-    { id: 'all', icon: <ListTodoIcon className="w-5 h-5 text-foreground" />, name: 'All', count: 12 },
-    { id: 'today', icon: <ClockAlertIcon className="w-5 h-5 text-foreground" />, name: 'Today', count: 12 },
-    { id: 'upcoming', icon: <ClockArrowUpIcon className="w-5 h-5 text-foreground" />, name: 'Upcoming', count: 12 },
-    { id: 'delayed', icon: <AlertTriangleIcon className="w-5 h-5 text-foreground" />, name: 'Delayed', count: 5 },
-    // { id: 'calendar', icon: <div className="w-5 h-5 flex items-center justify-center">📅</div>, name: 'Calendar' },
-    // { id: 'sticky', icon: <div className="w-5 h-5 flex items-center justify-center">📌</div>, name: 'Sticky Wall' },
+    { id: 'all', icon: <ListTodoIcon className="w-5 h-5 text-foreground" />, name: 'All', count: counts.all },
+    { id: 'today', icon: <ClockAlertIcon className="w-5 h-5 text-foreground" />, name: 'Today', count: counts.today },
+    { id: 'upcoming', icon: <ClockArrowUpIcon className="w-5 h-5 text-foreground" />, name: 'Upcoming', count: counts.upcoming },
+    { id: 'delayed', icon: <AlertTriangleIcon className="w-5 h-5 text-foreground" />, name: 'Delayed', count: counts.delayed },
   ];
 
   const [isAddListModalOpen, setAddListModalOpen] = useState(false);

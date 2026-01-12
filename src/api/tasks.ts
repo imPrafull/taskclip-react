@@ -56,3 +56,15 @@ export async function createTask(taskData: Partial<TaskItem>): Promise<TaskItem>
 
   return newTask;
 }
+
+export type TaskCounts = {
+  all: number;
+  today: number;
+  upcoming: number;
+  delayed: number;
+};
+
+export async function getTaskCounts(): Promise<TaskCounts> {
+  const data = await apiService.apiFetch<TaskCounts>("/tasks/count");
+  return data;
+}
