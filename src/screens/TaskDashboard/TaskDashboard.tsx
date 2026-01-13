@@ -1,19 +1,16 @@
-import { MenuIcon, PlusIcon, ArrowDownUpIcon, ListFilterIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import Header from '../../components/Header';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { TaskList } from "../../components/tasks/TaskList";
 import { Sidebar } from "../../components/Sidebar";
-import { Button } from "../../components/ui/Button";
 import { TaskListInfo } from "../../models/task";
 import { RootState, AppDispatch } from '../../store/store';
 import { getTasks, resetTasks } from '../../store/slices/tasksSlice';
 import { fetchLists, addNewList } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
-import { Select } from "../../components/ui/select";
 // import { Input } from "../../components/ui/Input";
-import { selectList, selectTaskNavItem, setSortBy, setStatus } from '../../store/slices/filtersSlice';
-import { TaskStatus } from '../../models/task';
+import { selectList, selectTaskNavItem } from '../../store/slices/filtersSlice';
 
 export const TaskDashboard = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
@@ -75,8 +72,6 @@ export const TaskDashboard = (): JSX.Element => {
     if (isMobile) setIsDetailPinned(false);
   }, [isMobile]);
 
-  const formatStatusLabel = (key: string) => key.replace(/([A-Z])/g, ' $1').trim();
-
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
@@ -105,76 +100,10 @@ export const TaskDashboard = (): JSX.Element => {
             : ''
         }`}
       >
-        <div className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <MenuIcon className="w-6 h-6 text-foreground" />
-              </Button>
-              <div className="flex items-center">
-                <img src="/logo.png" alt="TaskClip Logo" className="w-7 h-7 pb-[2px]" />
-                <h3 className="text-2xl font-bold text-foreground ml-[-7px]">askclip</h3>
-              </div>
-            </div>
-            {/* <div className="relative flex-1 max-w-md ml-4">
-                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input
-                        type="text"
-                        placeholder="Search tasks..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2"
-                    />
-                </div> */}
-            <Button
-              onClick={handleAddNewTask}
-              className="flex items-center gap-2 py-2 px-4 text-base"
-              size="sm"
-            >
-              <PlusIcon className="w-4 h-4" />
-              <span className="font-medium mb-1">Add</span>
-            </Button>
-          </div>
-          <div className="flex items-center justify-end">
-            <div className="flex items-center gap-2 mt-4">
-              <div className="relative">
-                <ListFilterIcon className="w-4 h-4 text-accent-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <Select
-                  id="status-filter"
-                  value={selectedStatus}
-                  onChange={(e) => dispatch(setStatus(e.target.value as TaskStatus | 'all'))}
-                  className="text-sm sm:text-sm px-2 py-1 pl-8 pr-8 appearance-none min-w-26"
-                >
-                  <option value="all">Status</option>
-                  {(Object.keys(TaskStatus) as Array<keyof typeof TaskStatus>).map((k) => (
-                    <option key={k} value={TaskStatus[k]}>
-                      {formatStatusLabel(k)}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              
-              <div className="relative">
-                <ArrowDownUpIcon className="w-4 h-4 text-accent-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <Select
-                  id="sort-by"
-                  value={sortBy}
-                  onChange={(e) => dispatch(setSortBy(e.target.value))}
-                  className="text-sm sm:text-sm px-2 py-1 pl-8 pr-8 min-w-26 appearance-none"
-                >
-                  <option value="createdAt:asc">Oldest First</option>
-                  <option value="createdAt:desc">Newest First</option>
-                  <option value="dueDate:asc">Due Soon</option>
-                </Select>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Header
+          onOpenSidebar={() => setSidebarOpen(true)}
+          onAdd={handleAddNewTask}
+        />
 
         {(taskStatus === "loading" && tasks.length === 0) && (
           <div className="flex-1 flex items-center justify-center">
