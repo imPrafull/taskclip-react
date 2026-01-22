@@ -67,7 +67,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, selectedTaskId }) => {
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <div className="flex-1 min-w-0">
-          <p className="text-foreground font-medium truncate">{task.title}</p>
+          <p className="text-foreground font-medium truncate mr-3">{task.title}</p>
         </div>
       </div>
       

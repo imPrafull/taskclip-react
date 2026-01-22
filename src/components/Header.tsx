@@ -71,16 +71,16 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd }) => {
         <div className="flex items-center gap-2 mt-4">
           <div className="flex items-center gap-3">
             <span
-              className={`inline-flex items-center px-3 py-1 rounded-lg ${chipBgClass ?? 'bg-accent'} ${selectedListTextClass} font-semibold text-base shadow-sm`}
+              className={`inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 mr-2 rounded-lg ${chipBgClass ?? 'bg-accent'} ${selectedListTextClass} font-semibold text-sm md:text-base shadow-sm`}
               style={chipStyle}
             >
               <span className="mr-2">{navLabel}</span>
-              <span className={`inline-flex items-center ${countBadgeClass} px-2 py-0.5 rounded-lg text-sm font-medium`}>{visibleCount}</span>
+              <span className={`inline-flex items-center ${countBadgeClass} px-2 py-0.5 rounded-lg text-xs sm:text-sm font-medium`}>{visibleCount}</span>
             </span>
 
             {selectedListName && (
               <span
-                className={`inline-flex items-center px-3 py-1 rounded-lg ${chipBgClass ?? 'bg-emerald-600'} ${selectedListTextClass} font-semibold text-base shadow-sm`}
+                className={`inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg ${chipBgClass ?? 'bg-emerald-600'} ${selectedListTextClass} font-semibold text-sm md:text-base shadow-sm`}
                 style={chipStyle}
               >
                 {selectedListName}
@@ -96,7 +96,7 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd }) => {
               id="status-filter"
               value={selectedStatus}
               onChange={(e) => dispatch(setStatus(e.target.value as TaskStatus | 'all'))}
-              className="text-sm sm:text-sm px-2 py-1 pl-8 pr-8 appearance-none min-w-26"
+              className="text-xs sm:text-sm px-2 py-1 pl-8 pr-2 sm:pr-8 appearance-none min-w-26"
             >
               <option value="all">Status</option>
               {(Object.keys(TaskStatus) as Array<keyof typeof TaskStatus>).map((k) => (
@@ -109,7 +109,7 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd }) => {
 
           <div className="relative">
             <ArrowDownUpIcon className="w-4 h-4 text-accent-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <Select id="sort-by" value={sortBy} onChange={(e) => dispatch(setSortBy(e.target.value))} className="text-sm sm:text-sm px-2 py-1 pl-8 pr-8 min-w-26 appearance-none">
+            <Select id="sort-by" value={sortBy} onChange={(e) => dispatch(setSortBy(e.target.value))} className="text-xs sm:text-sm px-2 py-1 pl-8 pr-2 sm:pr-8 min-w-26 appearance-none">
               <option value="createdAt:asc">Oldest First</option>
               <option value="createdAt:desc">Newest First</option>
               <option value="dueDate:asc">Due Soon</option>
