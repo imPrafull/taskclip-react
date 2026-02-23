@@ -75,8 +75,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   }, []);
 
-  const handleLogout = () => {
-    authService.logout();
+  const handleLogout = async () => {
+    await authService.logout();
     navigate("/", { replace: true });
   };
 
