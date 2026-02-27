@@ -12,9 +12,10 @@ import { setStatus, setSortBy } from '../store/slices/filtersSlice';
 type Props = {
   onOpenSidebar: () => void;
   onAdd: () => void;
+  isLoading: boolean;
 };
 
-export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd }) => {
+export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd, isLoading }) => {
   const { theme } = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const lists = useSelector((state: RootState) => state.lists.lists);
@@ -61,7 +62,7 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd }) => {
           </div>
         </div>
 
-        <Button onClick={onAdd} className="flex items-center gap-2 py-2 px-4 text-base" size="sm">
+        <Button onClick={onAdd} disabled={isLoading} className="flex items-center gap-2 py-2 px-4 text-base" size="sm">
           <PlusIcon className="w-4 h-4" />
           <span className="font-medium mb-1">Add</span>
         </Button>
@@ -96,6 +97,7 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd }) => {
               id="status-filter"
               value={selectedStatus}
               onChange={(e) => dispatch(setStatus(e.target.value as TaskStatus | 'all'))}
+              disabled={isLoading}
               className="text-xs sm:text-sm px-2 py-1 pl-8 pr-2 sm:pr-8 appearance-none min-w-26"
             >
               <option value="all">Status</option>
@@ -109,7 +111,7 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd }) => {
 
           <div className="relative">
             <ArrowDownUpIcon className="w-4 h-4 text-accent-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <Select id="sort-by" value={sortBy} onChange={(e) => dispatch(setSortBy(e.target.value))} className="text-xs sm:text-sm px-2 py-1 pl-8 pr-2 sm:pr-8 min-w-26 appearance-none">
+            <Select id="sort-by" value={sortBy} onChange={(e) => dispatch(setSortBy(e.target.value))} disabled={isLoading} className="text-xs sm:text-sm px-2 py-1 pl-8 pr-2 sm:pr-8 min-w-26 appearance-none">
               <option value="createdAt:asc">Oldest First</option>
               <option value="createdAt:desc">Newest First</option>
               <option value="dueDate:asc">Due Soon</option>

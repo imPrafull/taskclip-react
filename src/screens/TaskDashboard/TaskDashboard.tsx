@@ -11,6 +11,7 @@ import { fetchLists, addNewList } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
 // import { Input } from "../../components/ui/Input";
 import { selectList, selectTaskNavItem } from '../../store/slices/filtersSlice';
+import { Loader2 } from "lucide-react";
 
 export const TaskDashboard = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
@@ -88,7 +89,7 @@ export const TaskDashboard = (): JSX.Element => {
         }}
         lists={lists}
         onListCreated={handleListCreated}
-        
+        isLoading={taskStatus === 'loading' && tasks.length === 0}
       />
 
       <div
@@ -103,11 +104,13 @@ export const TaskDashboard = (): JSX.Element => {
         <Header
           onOpenSidebar={() => setSidebarOpen(true)}
           onAdd={handleAddNewTask}
+          isLoading={taskStatus === 'loading' && tasks.length === 0}
         />
 
         {(taskStatus === "loading" && tasks.length === 0) && (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-foreground">Loading...</p>
+          <div className="flex-1 flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            <p className="text-foreground text-base font-medium">Loading tasks...</p>
           </div>
         )}
         {(taskError || listError || tagsError) && (

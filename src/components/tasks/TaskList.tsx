@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { TaskItem } from "./TaskItem";
 import { RootState, AppDispatch } from '../../store/store';
 import { getTasks } from '../../store/slices/tasksSlice';
+import { Loader2 } from "lucide-react";
 
 type TaskListProps = {
   selectedTaskId?: string;
@@ -57,7 +58,12 @@ export const TaskList: React.FC<TaskListProps> = ({ selectedTaskId }) => {
           );
         }
       })}
-      {status === 'loading' && <p className="text-center p-4">Loading more tasks...</p>}
+      {status === 'loading' && tasks.length > 0 && (
+        <div className="flex items-center justify-center gap-2 p-4">
+          <Loader2 className="w-5 h-5 text-primary animate-spin" />
+          <p className="text-muted-foreground text-base">Loading more tasks...</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -21,6 +21,7 @@ type SidebarProps = {
   onTaskNavItemSelect: (itemId: string | null) => void;
   lists: TaskListInfo[];
   onListCreated: (newList: TaskListInfo) => void;
+  isLoading: boolean;
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -32,6 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onTaskNavItemSelect,
   lists,
   onListCreated,
+  isLoading,
 }) => {
   const { theme, toggleTheme } = useTheme();
 
@@ -132,11 +134,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => {
                     onTaskNavItemSelect(selectedTaskNavItemId === item.id ? null : item.id);
                   }}
+                  disabled={isLoading}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
                     selectedTaskNavItemId === item.id
                       ? "bg-accent text-accent-foreground"
                       : "text-foreground hover:bg-muted"
-                  }`}
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   <div className="flex items-center gap-2">
                     {item.icon}
@@ -170,11 +173,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => {
                     onListSelect(selectedListId === list.id ? null : list.id); // Deselect if already selected
                   }}
+                  disabled={isLoading}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
                     selectedListId === list.id
                       ? "bg-accent text-accent-foreground"
                       : "text-foreground hover:bg-muted"
-                  }`}
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   <div className="flex items-center gap-3">
                     <div

@@ -5,6 +5,7 @@ import { TaskForm } from './TaskForm';
 import { RootState, AppDispatch } from '../../store/store';
 import { getTasks, addNewTask, updateTask } from '../../store/slices/tasksSlice';
 import { TaskItem, TaskPayload, TaskStatus } from '../../models/task';
+import { Loader2 } from 'lucide-react';
 
 interface TaskFormWrapperProps {
     mode: 'create' | 'edit';
@@ -71,7 +72,12 @@ export const TaskFormWrapper = ({ mode }: TaskFormWrapperProps) => {
     }
 
     if (mode === 'edit' && !task) {
-        return <div className="p-6">Loading...</div>;
+        return (
+            <div className="flex flex-col items-center justify-center gap-3 p-6">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                <p className="text-foreground text-base font-medium">Loading task...</p>
+            </div>
+        );
     }
 
     return (
