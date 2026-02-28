@@ -86,6 +86,7 @@ export const TaskDashboard = (): JSX.Element => {
         }}
         onTaskNavItemSelect={(itemId) => {
           dispatch(selectTaskNavItem(itemId!));
+          setSidebarOpen(false);
         }}
         lists={lists}
         onListCreated={handleListCreated}

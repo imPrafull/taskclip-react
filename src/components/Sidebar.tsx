@@ -161,6 +161,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 size="sm"
                 className="p-2 h-auto text-foreground hover:text-foreground"
                 onClick={() => setAddListModalOpen(true)}
+                disabled={isLoading}
               >
                 <PlusIcon className="w-4 h-4" />
               </Button>

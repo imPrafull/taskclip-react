@@ -37,7 +37,7 @@ export const TaskList: React.FC<TaskListProps> = ({ selectedTaskId }) => {
   }
 
   return (
-    <div className="divide-y-2 divide-gray-100">
+    <div className="divide-y-2 divide-gray-100 dark:divide-border">
       {tasks.map((task, index) => {
         if (tasks.length === index + 1) {
           return (

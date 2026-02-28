@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from "sonner";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { SignIn } from "./screens/SignIn";
 import { SignUp } from "./screens/SignUp";
@@ -8,7 +9,9 @@ import { TaskFormWrapper } from "./components/tasks/TaskFormWrapper";
 
 export const App = () => {
     return (
-        <Routes>
+        <>
+            <Toaster position="bottom-right" richColors />
+            <Routes>
             <Route path="/" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route
@@ -23,6 +26,7 @@ export const App = () => {
                 <Route path=":id" element={<TaskDetailWrapper />} />
                 <Route path="edit/:id" element={<TaskFormWrapper mode="edit" />} />
             </Route>
-        </Routes>
+            </Routes>
+        </>
     );
 };

@@ -3,7 +3,7 @@ import React from "react";
 import { Calendar } from "lucide-react";
 import { cn } from "../../lib/utils";
 
-import { TaskItem as Task, TaskStatus, statusOptionClassMap } from "../../models/task";
+import { TaskItem as Task, TaskStatus, statusOptionClassMap, statusBorderClassMap } from "../../models/task";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { updateTask } from "../../store/slices/tasksSlice";
@@ -83,22 +83,27 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, selectedTaskId }) => {
       )}
 
       <div className="flex items-center gap-2">
-        <select
-          value={task.status}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-          onChange={(e) => {
-            e.stopPropagation();
-            const newStatus = e.target.value as TaskStatus;
-            dispatch(updateTask({ id: task.id, status: newStatus } as any)).catch((err) => console.error(err));
-          }}
-          className="capitalize text-sm bg-transparent text-muted-foreground border border-border rounded px-2 py-0.5"
-        >
-          <option className={statusOptionClassMap[TaskStatus.Todo]} value={TaskStatus.Todo}>{TaskStatus.Todo}</option>
-          <option className={statusOptionClassMap[TaskStatus.InProgress]} value={TaskStatus.InProgress}>{TaskStatus.InProgress}</option>
-          <option className={statusOptionClassMap[TaskStatus.OnHold]} value={TaskStatus.OnHold}>{TaskStatus.OnHold}</option>
-          <option className={statusOptionClassMap[TaskStatus.Done]} value={TaskStatus.Done}>{TaskStatus.Done}</option>
-        </select>
+        <div className="relative flex items-center">
+          <select
+            value={task.status}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              e.stopPropagation();
+              const newStatus = e.target.value as TaskStatus;
+              dispatch(updateTask({ id: task.id, status: newStatus } as any)).catch((err) => console.error(err));
+            }}
+            className={cn("appearance-none capitalize text-sm font-semibold bg-background border rounded-lg pl-2 pr-5 py-1 cursor-pointer [color-scheme:light] dark:[color-scheme:dark]", statusOptionClassMap[task.status], statusBorderClassMap[task.status])}
+          >
+            <option className={cn(statusOptionClassMap[TaskStatus.Todo], "font-semibold")} value={TaskStatus.Todo}>{TaskStatus.Todo}</option>
+            <option className={cn(statusOptionClassMap[TaskStatus.InProgress], "font-semibold")} value={TaskStatus.InProgress}>{TaskStatus.InProgress}</option>
+            <option className={cn(statusOptionClassMap[TaskStatus.OnHold], "font-semibold")} value={TaskStatus.OnHold}>{TaskStatus.OnHold}</option>
+            <option className={cn(statusOptionClassMap[TaskStatus.Done], "font-semibold")} value={TaskStatus.Done}>{TaskStatus.Done}</option>
+          </select>
+          <svg className={cn("pointer-events-none absolute right-1.5 w-3.5 h-3.5", statusOptionClassMap[task.status])} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+          </svg>
+        </div>
       </div>
     </div>
   );

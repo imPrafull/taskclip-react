@@ -1,5 +1,5 @@
 import React from 'react';
-import { MenuIcon, PlusIcon, ArrowDownUpIcon, ListFilterIcon } from 'lucide-react';
+import { MenuIcon, PlusIcon, ArrowDownUpIcon, ListFilterIcon, XIcon } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Select } from './ui/select';
 import { TaskStatus } from '../models/task';
@@ -7,7 +7,7 @@ import { useTheme } from '../hooks/useTheme';
 import { getContrastTextClass } from '../lib/utils';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
-import { setStatus, setSortBy } from '../store/slices/filtersSlice';
+import { setStatus, setSortBy, selectList } from '../store/slices/filtersSlice';
 
 type Props = {
   onOpenSidebar: () => void;
@@ -62,29 +62,35 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd, isLoading }) => 
           </div>
         </div>
 
-        <Button onClick={onAdd} disabled={isLoading} className="flex items-center gap-2 py-2 px-4 text-base" size="sm">
+        <Button onClick={onAdd} disabled={isLoading} className="flex items-center gap-2 py-2 px-4 text-base" size="default">
           <PlusIcon className="w-4 h-4" />
           <span className="font-medium mb-1">Add</span>
         </Button>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 mt-4">
           <div className="flex items-center gap-3">
             <span
-              className={`inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 mr-2 rounded-lg ${chipBgClass ?? 'bg-accent'} ${selectedListTextClass} font-semibold text-sm md:text-base shadow-sm`}
+              className={`inline-flex items-center px-2 py-1 sm:px-3 sm:py-2 rounded-lg ${chipBgClass ?? 'bg-accent'} ${selectedListTextClass} font-semibold text-sm md:text-base shadow-sm`}
               style={chipStyle}
             >
               <span className="mr-2">{navLabel}</span>
-              <span className={`inline-flex items-center ${countBadgeClass} px-2 py-0.5 rounded-lg text-xs sm:text-sm font-medium`}>{visibleCount}</span>
+              <span className={`inline-flex items-center ${countBadgeClass} px-2 py-0.5 rounded-lg text-xs/4 sm:text-sm/4 font-medium`}>{visibleCount}</span>
             </span>
 
             {selectedListName && (
               <span
-                className={`inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg ${chipBgClass ?? 'bg-emerald-600'} ${selectedListTextClass} font-semibold text-sm md:text-base shadow-sm`}
+                className={`inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-lg ${chipBgClass ?? 'bg-emerald-600'} ${selectedListTextClass} font-semibold text-sm md:text-base shadow-sm`}
                 style={chipStyle}
               >
                 {selectedListName}
+                <button
+                  onClick={() => dispatch(selectList(null))}
+                  className="ml-1 opacity-70 hover:opacity-100 transition-opacity"
+                >
+                  <XIcon className="w-3.5 h-3.5" />
+                </button>
               </span>
             )}
           </div>
@@ -98,7 +104,7 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd, isLoading }) => 
               value={selectedStatus}
               onChange={(e) => dispatch(setStatus(e.target.value as TaskStatus | 'all'))}
               disabled={isLoading}
-              className="text-xs sm:text-sm px-2 py-1 pl-8 pr-2 sm:pr-8 appearance-none min-w-26"
+              className="text-xs sm:text-sm px-2 py-1 sm:py-2 pl-8 pr-2 sm:pr-8 appearance-none min-w-26"
             >
               <option value="all">Status</option>
               {(Object.keys(TaskStatus) as Array<keyof typeof TaskStatus>).map((k) => (
@@ -111,7 +117,7 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd, isLoading }) => 
 
           <div className="relative">
             <ArrowDownUpIcon className="w-4 h-4 text-accent-foreground absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <Select id="sort-by" value={sortBy} onChange={(e) => dispatch(setSortBy(e.target.value))} disabled={isLoading} className="text-xs sm:text-sm px-2 py-1 pl-8 pr-2 sm:pr-8 min-w-26 appearance-none">
+            <Select id="sort-by" value={sortBy} onChange={(e) => dispatch(setSortBy(e.target.value))} disabled={isLoading} className="text-xs sm:text-sm px-2 py-1 sm:py-2 pl-8 pr-2 sm:pr-8 min-w-26 appearance-none">
               <option value="createdAt:asc">Oldest First</option>
               <option value="createdAt:desc">Newest First</option>
               <option value="dueDate:asc">Due Soon</option>

@@ -73,7 +73,7 @@ export const AddListModal: React.FC<AddListModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+      <div className="bg-background rounded-lg shadow-xl p-6 w-full max-w-md border border-border">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-medium text-foreground">Create New List</h3>
           <Button variant="ghost" size="icon" onClick={onClose} className="text-foreground">
@@ -93,7 +93,7 @@ export const AddListModal: React.FC<AddListModalProps> = ({
               <label className="text-sm font-medium text-foreground mb-2 block">Color</label>
               <div className="flex flex-wrap gap-2">
                 {FIXED_COLORS.map(color => (
-                  <button key={color} type="button" onClick={() => setSelectedColor(color)} className={`w-8 h-8 rounded-full transition-all ${selectedColor === color ? 'ring-2 ring-offset-2 ring-purple-500' : ''}`} style={{ backgroundColor: color }}>
+                  <button key={color} type="button" onClick={() => setSelectedColor(color)} className={`w-8 h-8 rounded-full transition-all ${selectedColor === color ? 'ring-2 ring-offset-2 ring-offset-background ring-primary' : ''}`} style={{ backgroundColor: color }}>
                     <span className="sr-only">{color}</span>
                   </button>
                 ))}

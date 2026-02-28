@@ -16,6 +16,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           variant === "default" && "border-border bg-background text-base sm:text-lg shadow-sm",
           variant === "secondary" && "border-border-dark bg-input text-lg sm:text-xl shadow-none",
           error && "border-red-500 focus-visible:ring-red-500",
+          type === "date" && "[color-scheme:light] dark:[color-scheme:dark]",
           className,
         )}
         ref={ref}

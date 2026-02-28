@@ -60,12 +60,12 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
 
       <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-6">
         <div>
-          <h2 className="text-4xl font-medium">{task.title}</h2>
+          <h2 className="text-4xl font-medium select-text">{task.title}</h2>
         </div>
 
         <div>
           <h4 className="text-lg font-bold text-muted-foreground">Description</h4>
-          <p className="text-lg text-foreground mt-1">{task.description || "No description provided"}</p>
+          <p className="text-lg text-foreground mt-1 select-text">{task.description || "No description provided"}</p>
         </div>
 
         {/* <div className="flex items-center gap-4 mt-1">
