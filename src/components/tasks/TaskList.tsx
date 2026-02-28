@@ -30,8 +30,16 @@ export const TaskList: React.FC<TaskListProps> = ({ selectedTaskId }) => {
 
   if (tasks.length === 0 && status !== 'loading') {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-foreground font-medium">No tasks found</p>
+      <div className="flex flex-col items-center justify-center h-full p-8">
+        <img
+          src="/no-tasks-found.png"
+          alt="No tasks found"
+          className="w-72 h-72 object-contain mb-2"
+        />
+        <h2 className="text-4xl font-bold text-foreground">No Tasks Found</h2>
+        <p className="text-muted-foreground text-center text-lg mb-24">
+          You have no tasks right now. Create a task to get started.
+        </p>
       </div>
     );
   }
