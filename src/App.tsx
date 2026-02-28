@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { Welcome } from "./screens/Welcome";
 import { SignIn } from "./screens/SignIn";
 import { SignUp } from "./screens/SignUp";
 import { TaskDashboard } from "./screens/TaskDashboard";
@@ -12,7 +13,8 @@ export const App = () => {
         <>
             <Toaster position="bottom-right" richColors />
             <Routes>
-            <Route path="/" element={<SignIn />} />
+            <Route path="/" element={<Welcome />} />
+            <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route
                 path="/tasks"

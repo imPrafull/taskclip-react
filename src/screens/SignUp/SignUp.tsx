@@ -107,7 +107,7 @@ export const SignUp = (): JSX.Element => {
             </Button>
 
             <p className="mt-4 font-bold text-lg text-center md:text-left">
-              Already have an account? <button type="button" onClick={() => navigate("/")} className="text-primary hover:underline">Log in here.</button>
+              Already have an account? <button type="button" onClick={() => navigate("/sign-in")} className="text-primary hover:underline">Log in here.</button>
             </p>
           </form>
         </div>
