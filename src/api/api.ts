@@ -1,9 +1,8 @@
 import { storageService, REFRESH_TOKEN_KEY, USER_KEY } from "../lib/storage";
-import { authService } from "./auth";
 import { toast } from "sonner";
 import { posthog } from "../lib/posthog";
 
-export const API_BASE_URL = "http://localhost:3000";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
 // ---------------------------------------------------------------------------
 // Slow-API toast helpers
