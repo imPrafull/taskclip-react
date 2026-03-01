@@ -1,7 +1,7 @@
 import React from 'react';
 import { MenuIcon, PlusIcon, ArrowDownUpIcon, ListFilterIcon, XIcon } from 'lucide-react';
 import { Button } from './ui/Button';
-import { Select } from './ui/select';
+import { Select } from './ui/Select';
 import { TaskStatus } from '../models/task';
 import { useTheme } from '../hooks/useTheme';
 import { getContrastTextClass } from '../lib/utils';

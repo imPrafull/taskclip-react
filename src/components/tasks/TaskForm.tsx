@@ -4,7 +4,7 @@ import { TaskItem, TaskPayload, TaskStatus } from "../../models/task";
 import { Button } from "../ui/Button";
 import { Textarea } from "../ui/Textarea";
 import { Input } from "../ui/Input";
-import { Select } from "../ui/select";
+import { Select } from "../ui/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchLists } from "../../store/slices/listsSlice";
