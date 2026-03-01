@@ -1,6 +1,7 @@
 import { storageService, REFRESH_TOKEN_KEY, USER_KEY } from "../lib/storage";
 import { authService } from "./auth";
 import { toast } from "sonner";
+import { posthog } from "../lib/posthog";
 
 export const API_BASE_URL = "http://localhost:3000";
 
@@ -174,11 +175,24 @@ export const apiService = {
               const retried = await apiService._attemptRequest<T>(endpoint, options, newAccess);
               onRequestEnd();
               return retried;
-            } catch (retryErr) {
+            } catch (retryErr: any) {
+              posthog.capture('api_error', {
+                endpoint,
+                method: (options.method ?? 'GET').toUpperCase(),
+                status: retryErr?.status ?? null,
+                message: retryErr?.message ?? String(retryErr),
+              });
               onRequestEnd();
               throw retryErr;
             }
           }
+        } else {
+          posthog.capture('api_error', {
+            endpoint,
+            method: (options.method ?? 'GET').toUpperCase(),
+            status: err?.status ?? null,
+            message: err?.message ?? String(err),
+          });
         }
         onRequestEnd();
         throw err;

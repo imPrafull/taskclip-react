@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "../../api/auth";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
+import { posthog } from "../../lib/posthog";
 
 export const SignIn = (): JSX.Element => {
   const navigate = useNavigate();
@@ -27,8 +28,14 @@ export const SignIn = (): JSX.Element => {
     const response = await authService.signIn(email, password);
 
     if (response.success) {
+      const user = response.user;
+      if (user) {
+        posthog.identify(user.id, { email: user.email, name: user.name });
+      }
+      posthog.capture('user_signed_in', { email });
       navigate("/tasks", { replace: true });
     } else {
+      posthog.capture('sign_in_failed', { email, error: response.error });
       setError(response.error || "Sign in failed");
     }
 

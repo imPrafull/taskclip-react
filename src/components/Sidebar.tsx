@@ -11,6 +11,7 @@ import { getTaskCounts } from "../api/tasks";
 import { storageService, USER_KEY } from "../lib/storage";
 import { User } from "../models/auth";
 import UserCard from "./UserCard";
+import { posthog } from "../lib/posthog";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -78,6 +79,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }, []);
 
   const handleLogout = async () => {
+    posthog.capture('user_signed_out');
+    posthog.reset();
     await authService.logout();
     navigate("/", { replace: true });
   };
