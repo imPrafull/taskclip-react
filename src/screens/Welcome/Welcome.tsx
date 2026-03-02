@@ -20,7 +20,7 @@ export const Welcome = (): JSX.Element => {
           <img
             className="w-full max-w-[280px] md:max-w-[560px] h-auto"
             alt="Productive mind illustration"
-            src="/focus.png"
+            src="/focus.svg"
           />
         </div>
 

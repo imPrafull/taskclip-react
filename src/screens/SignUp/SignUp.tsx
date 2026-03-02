@@ -51,7 +51,7 @@ export const SignUp = (): JSX.Element => {
           <img
             className="w-full max-w-[260px] md:max-w-[560px] h-auto"
             alt="focus"
-            src="/focus.png"
+            src="/focus.svg"
           />
         </div>
 
