@@ -32,7 +32,7 @@ export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, 
   try {
     const state = getState() as any;
     const sortByValue = sort ?? state.taskfilters.sortBy;
-    const limit = 10;
+    const limit = 30;
     const skip = (page - 1) * limit;
     // Prefer explicit listId/due params, otherwise fall back to currently selected values in filters
     const effectiveListId = listId ?? state.taskfilters.selectedListId ?? null;

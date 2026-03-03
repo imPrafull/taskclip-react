@@ -21,7 +21,7 @@ function onRequestStart() {
       _slowToastShown = true;
       _slowToastId = toast("Server is waking up", {
         description:
-          "The API server is on a free tier and may take a minute to spin up. Please wait — your data is on its way!",
+          "The API server is on a free tier and may take a minute to spin up. Please wait, your data is loading!",
         duration: 70000,
         icon: "🌐",
         closeButton: true,
