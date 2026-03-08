@@ -1,4 +1,4 @@
-import { LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon, AlertTriangleIcon, ListTodoIcon, ClockAlertIcon, ClockArrowUpIcon } from "lucide-react";
+import { LogOutIcon, XIcon, PlusIcon, MoonIcon, SunIcon, AlertTriangleIcon, ListTodoIcon, ClockAlertIcon, ClockArrowUpIcon, Settings } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../api/auth";
@@ -21,7 +21,6 @@ type SidebarProps = {
   onListSelect: (listId: string | null) => void;
   onTaskNavItemSelect: (itemId: string | null) => void;
   lists: TaskListInfo[];
-  onListCreated: (newList: TaskListInfo) => void;
   isLoading: boolean;
 };
 
@@ -33,7 +32,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onListSelect,
   onTaskNavItemSelect,
   lists,
-  onListCreated,
   isLoading,
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -85,14 +83,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     navigate("/", { replace: true });
   };
 
-  const handleListCreated = (newList: TaskListInfo) => {
-    onListCreated(newList);
-    onClose(); // Close sidebar on mobile after creation
-  };
+  // no-op: AddListModal dispatches creation directly
 
   return (
     <>
-      <AddListModal isOpen={isAddListModalOpen} onClose={() => setAddListModalOpen(false)} onListCreated={handleListCreated} />
+            <AddListModal isOpen={isAddListModalOpen} onClose={() => setAddListModalOpen(false)} />
       <AddTagModal isOpen={isAddTagModalOpen} onClose={() => setAddTagModalOpen(false)} />
 
       {isOpen && (
@@ -194,6 +189,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span className="text-sm text-muted-foreground font-medium">{list.count}</span>
                 </button>
               ))}
+            </div>
+            <div className="mt-4">
+              <Button
+                variant="outline"
+                size="default"
+                className="w-full"
+                onClick={() => navigate('/lists/manage')}
+                disabled={isLoading}
+              >
+                <Settings className="w-4 h-4" />
+                <p className="mb-1">Manage lists</p>
+              </Button>
             </div>
           </div>
 

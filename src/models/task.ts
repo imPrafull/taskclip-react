@@ -16,6 +16,7 @@ export type TaskListInfo = {
   name: string;
   color: string;
   count: number;
+  description?: string;
 };
 
 export enum TaskStatus {

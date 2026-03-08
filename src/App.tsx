@@ -5,6 +5,7 @@ import { Welcome } from "./screens/Welcome";
 import { SignIn } from "./screens/SignIn";
 import { SignUp } from "./screens/SignUp";
 import { TaskDashboard } from "./screens/TaskDashboard";
+import { ListManagement } from "./screens/ListManagement";
 import { TaskDetailWrapper } from "./components/tasks/TaskDetailWrapper";
 import { TaskFormWrapper } from "./components/tasks/TaskFormWrapper";
 
@@ -28,6 +29,14 @@ export const App = () => {
                 <Route path=":id" element={<TaskDetailWrapper />} />
                 <Route path="edit/:id" element={<TaskFormWrapper mode="edit" />} />
             </Route>
+            <Route
+                path="/lists/manage"
+                element={
+                    <ProtectedRoute>
+                        <ListManagement />
+                    </ProtectedRoute>
+                }
+            />
             </Routes>
         </>
     );

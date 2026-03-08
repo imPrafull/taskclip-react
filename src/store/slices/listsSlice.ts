@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TaskListInfo } from '../../models/task';
 import { apiService } from '../../api/api';
+import { CreateListPayload, deleteList as apiDeleteList, updateList as apiUpdateList } from '../../api/lists';
 
 interface ListsState {
   lists: TaskListInfo[];
@@ -19,11 +20,21 @@ export const fetchLists = createAsyncThunk('lists/fetchLists', async () => {
   return response;
 });
 
-export const addNewList = createAsyncThunk('lists/addNewList', async (newList: Omit<TaskListInfo, 'id'>) => {
+export const addNewList = createAsyncThunk('lists/addNewList', async (newList: CreateListPayload) => {
   const response = await apiService.apiFetch<TaskListInfo>('/lists', {
     method: 'POST',
     body: JSON.stringify(newList),
   });
+  return response;
+});
+
+export const deleteList = createAsyncThunk('lists/deleteList', async (id: string) => {
+  await apiDeleteList(id);
+  return id;
+});
+
+export const updateList = createAsyncThunk('lists/updateList', async ({ id, data }: { id: string; data: Partial<CreateListPayload> }) => {
+  const response = await apiUpdateList(id, data as { name?: string; description?: string; color?: string });
   return response;
 });
 
@@ -47,6 +58,12 @@ const listsSlice = createSlice({
       })
       .addCase(addNewList.fulfilled, (state, action: PayloadAction<TaskListInfo>) => {
         state.lists.push(action.payload);
+      });
+      builder.addCase(deleteList.fulfilled, (state, action: PayloadAction<string>) => {
+        state.lists = state.lists.filter((l) => l.id !== action.payload);
+      });
+      builder.addCase(updateList.fulfilled, (state, action: PayloadAction<TaskListInfo>) => {
+        state.lists = state.lists.map((l) => (l.id === action.payload.id ? action.payload : l));
       });
   },
 });

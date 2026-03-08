@@ -4,10 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { TaskList } from "../../components/tasks/TaskList";
 import { Sidebar } from "../../components/Sidebar";
-import { TaskListInfo } from "../../models/task";
 import { RootState, AppDispatch } from '../../store/store';
 import { getTasks, resetTasks } from '../../store/slices/tasksSlice';
-import { fetchLists, addNewList } from '../../store/slices/listsSlice';
+import { fetchLists } from '../../store/slices/listsSlice';
 import { fetchTags } from "../../store/slices/tagsSlice";
 // import { Input } from "../../components/ui/Input";
 import { selectList, selectTaskNavItem } from '../../store/slices/filtersSlice';
@@ -62,11 +61,6 @@ export const TaskDashboard = (): JSX.Element => {
     navigate(`/tasks/${newTaskId}`);
   };
 
-  const handleListCreated = (newListInfo: Omit<TaskListInfo, 'id'>) => {
-    dispatch(addNewList(newListInfo));
-    setSidebarOpen(false);
-  };
-
   const showDetail = location.pathname !== '/tasks';
 
   useEffect(() => {
@@ -89,7 +83,6 @@ export const TaskDashboard = (): JSX.Element => {
           setSidebarOpen(false);
         }}
         lists={lists}
-        onListCreated={handleListCreated}
         isLoading={taskStatus === 'loading' && tasks.length === 0}
       />
 

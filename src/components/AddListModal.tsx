@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { XIcon } from "lucide-react";
 import { Button } from "./ui/Button";
-import { createList } from "../api/lists";
-import { TaskListInfo } from "../models/task";
+import { CreateListPayload } from "../api/lists";
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from "../store/store";
+import { addNewList, updateList } from "../store/slices/listsSlice";
 import { Input } from "./ui/Input";
 import { Textarea } from "./ui/Textarea";
 
@@ -19,14 +21,16 @@ const FIXED_COLORS = [
 type AddListModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onListCreated: (newList: TaskListInfo) => void;
+  /** Optional initial values for editing a list. If provided, modal will operate in edit mode */
+  initial?: { id?: string; name?: string; description?: string; color?: string };
 };
 
 export const AddListModal: React.FC<AddListModalProps> = ({
   isOpen,
   onClose,
-  onListCreated,
+  initial,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [listName, setListName] = useState("");
   const [description, setDescription] = useState("");
   const [selectedColor, setSelectedColor] = useState(FIXED_COLORS[0]);
@@ -35,14 +39,18 @@ export const AddListModal: React.FC<AddListModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      // Reset state when modal opens
       setListName("");
       setDescription("");
       setSelectedColor(FIXED_COLORS[0]);
+      if (initial) {
+        setListName(initial.name || "");
+        setDescription(initial.description || "");
+        setSelectedColor(initial.color || FIXED_COLORS[0]);
+      }
       setError(null);
       setIsSubmitting(false);
     }
-  }, [isOpen]);
+  }, [isOpen, initial]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,12 +61,16 @@ export const AddListModal: React.FC<AddListModalProps> = ({
     setIsSubmitting(true);
     setError(null);
     try {
-      const newList = await createList({
+      const payload: CreateListPayload = {
         name: listName,
         description: description,
         color: selectedColor,
-      });
-      onListCreated(newList);
+      };
+      if (initial && initial.id) {
+        await dispatch(updateList({ id: initial.id, data: payload } as any)).unwrap();
+      } else {
+        await dispatch(addNewList(payload)).unwrap();
+      }
       onClose();
     } catch (err) {
       setError((err as Error).message || "Failed to create list.");
@@ -75,7 +87,7 @@ export const AddListModal: React.FC<AddListModalProps> = ({
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-background rounded-lg shadow-xl p-6 w-full max-w-md border border-border">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-foreground">Create New List</h3>
+          <h3 className="text-lg font-medium text-foreground">{initial && initial.id ? 'Edit List' : 'Create New List'}</h3>
           <Button variant="ghost" size="icon" onClick={onClose} className="text-foreground">
             <XIcon className="w-5 h-5" />
           </Button>
@@ -104,7 +116,7 @@ export const AddListModal: React.FC<AddListModalProps> = ({
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <div className="flex justify-end gap-2">
             <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating..." : "Create List"}</Button>
+            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? (initial && initial.id ? 'Updating...' : 'Creating...') : (initial && initial.id ? 'Save' : 'Create List')}</Button>
           </div>
         </form>
       </div>

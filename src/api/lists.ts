@@ -19,3 +19,16 @@ export const createList = async (
 export const fetchLists = async (): Promise<TaskListInfo[]> => {
   return apiService.apiFetch<TaskListInfo[]>("/lists");
 };
+
+export const deleteList = async (id: string): Promise<void> => {
+  await apiService.apiFetch<void>(`/lists/${id}`, {
+    method: 'DELETE',
+  });
+};
+
+export const updateList = async (id: string, data: { name?: string; description?: string; color?: string }): Promise<TaskListInfo> => {
+  return apiService.apiFetch<TaskListInfo>(`/lists/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+};
