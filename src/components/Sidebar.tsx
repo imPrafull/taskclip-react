@@ -190,18 +190,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </button>
               ))}
             </div>
-            <div className="mt-4">
-              <Button
-                variant="outline"
-                size="default"
-                className="w-full"
-                onClick={() => navigate('/lists/manage')}
-                disabled={isLoading}
-              >
-                <Settings className="w-4 h-4" />
-                <p className="mb-1">Manage lists</p>
-              </Button>
-            </div>
+            {lists.length > 0 && (
+              <div className="mt-4">
+                <Button
+                  variant="outline"
+                  size="default"
+                  className="w-full"
+                  onClick={() => navigate('/lists/manage')}
+                  disabled={isLoading}
+                >
+                  <Settings className="w-4 h-4" />
+                  <p className="mb-1">Manage lists</p>
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* <div className="px-6 py-4 border-t border-border">
