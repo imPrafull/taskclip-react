@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TaskStatus } from '../../models/task';
+import { storageService, SORT_BY } from '../../lib/storage';
 
 interface FiltersState {
   selectedTaskNavItemId: string;
@@ -8,10 +9,12 @@ interface FiltersState {
   selectedStatus: TaskStatus | 'all';
 }
 
+const savedSortBy = storageService.getItem(SORT_BY) ?? 'createdAt:asc';
+
 const initialState: FiltersState = {
   selectedTaskNavItemId: 'all',
   selectedListId: null,
-  sortBy: 'createdAt:asc',
+  sortBy: savedSortBy,
   selectedStatus: 'all',
 };
 
@@ -31,6 +34,11 @@ const filtersSlice = createSlice({
     },
     setSortBy: (state, action: PayloadAction<string>) => {
       state.sortBy = action.payload;
+      try {
+        storageService.setItem(SORT_BY, action.payload);
+      } catch (e) {
+        // ignore storage errors (e.g., private mode)
+      }
     },
   },
 });

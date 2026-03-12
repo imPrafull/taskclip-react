@@ -1,5 +1,5 @@
 import { AuthApiResponse, AuthResponse, User } from "../models/auth";
-import { storageService, USER_KEY, REFRESH_TOKEN_KEY } from "../lib/storage";
+import { storageService, USER, REFRESH_TOKEN } from "../lib/storage";
 import { apiService } from "./api";
 
 export const authService = {
@@ -18,11 +18,11 @@ export const authService = {
       });
 
       const user: User = { id: data.user.id, name: data.user.name, email: data.user.email };
-      storageService.setItem(USER_KEY, JSON.stringify(user));
+      storageService.setItem(USER, JSON.stringify(user));
       // Store access token in memory and refresh token in storage (or rely on cookie)
       apiService.setAccessToken((data as any).accessToken);
       if ((data as any).refreshToken) {
-        storageService.setItem(REFRESH_TOKEN_KEY, (data as any).refreshToken);
+        storageService.setItem(REFRESH_TOKEN, (data as any).refreshToken);
       }
       return { success: true, user };
     } catch (error) {
@@ -40,10 +40,10 @@ export const authService = {
         body: JSON.stringify({ email, password }),
       });
       const user: User = { id: data.user.id, name: data.user.name, email: data.user.email };
-      storageService.setItem(USER_KEY, JSON.stringify(user));
+      storageService.setItem(USER, JSON.stringify(user));
       apiService.setAccessToken((data as any).accessToken);
       if ((data as any).refreshToken) {
-        storageService.setItem(REFRESH_TOKEN_KEY, (data as any).refreshToken);
+        storageService.setItem(REFRESH_TOKEN, (data as any).refreshToken);
       }
       return { success: true, user };
     } catch (error) {
@@ -53,7 +53,7 @@ export const authService = {
 
   logout: async () => {
     // Use refresh token for logout if available, otherwise rely on cookie-based logout
-    const refreshToken = storageService.getItem(REFRESH_TOKEN_KEY);
+    const refreshToken = storageService.getItem(REFRESH_TOKEN);
     try {
       await apiService.apiFetch("/users/logout", {
         method: "POST",
@@ -67,12 +67,12 @@ export const authService = {
     }
 
     apiService.setAccessToken(null);
-    storageService.removeItem(USER_KEY);
-    storageService.removeItem(REFRESH_TOKEN_KEY);
+    storageService.removeItem(USER);
+    storageService.removeItem(REFRESH_TOKEN);
   },
 
   getCurrentUser: (): User | null => {
-    const userJson = storageService.getItem(USER_KEY);
+    const userJson = storageService.getItem(USER);
     if (!userJson) return null;
     try {
       return JSON.parse(userJson);

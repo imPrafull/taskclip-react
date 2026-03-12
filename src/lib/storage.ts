@@ -1,5 +1,7 @@
-export const USER_KEY = "user";
-export const REFRESH_TOKEN_KEY = "refresh_token";
+export const USER = "user";
+export const REFRESH_TOKEN = "refresh_token";
+export const SORT_BY = 'taskListSortBy';
+export const DETAIL_PINNED = 'taskDetailPinned';
 
 export const storageService = {
   setItem(key: string, value: string): void {

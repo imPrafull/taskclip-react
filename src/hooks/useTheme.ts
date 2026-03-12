@@ -22,14 +22,14 @@ export const useTheme = () => {
     const onThemeChange = (e: Event) => {
       const detail = (e as CustomEvent<Theme>)?.detail;
       if (detail === 'light' || detail === 'dark') {
-        if (detail !== theme) setTheme(detail);
+        setTheme(detail);
       }
     };
 
     const onStorage = (e: StorageEvent) => {
       if (e.key === 'theme') {
         const newVal = e.newValue as Theme | null;
-        if (newVal && newVal !== theme) setTheme(newVal);
+        if (newVal) setTheme(newVal as Theme);
       }
     };
 

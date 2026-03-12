@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from '../../components/Header';
 import { useSelector, useDispatch } from 'react-redux';
+import { storageService, DETAIL_PINNED } from '../../lib/storage';
 import { useNavigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { TaskList } from "../../components/tasks/TaskList";
 import { Sidebar } from "../../components/Sidebar";
@@ -25,7 +26,14 @@ export const TaskDashboard = (): JSX.Element => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   // const [searchQuery, setSearchQuery] = useState("");
-  const [isDetailPinned, setIsDetailPinned] = useState(true);
+  const [isDetailPinned, setIsDetailPinned] = useState<boolean>(() => {
+    try {
+      const saved = storageService.getItem(DETAIL_PINNED);
+      return saved === null ? true : saved === 'true';
+    } catch (e) {
+      return true;
+    }
+  });
 
   useEffect(() => {
     if (listStatus === 'idle') {
@@ -66,6 +74,14 @@ export const TaskDashboard = (): JSX.Element => {
   useEffect(() => {
     if (isMobile) setIsDetailPinned(false);
   }, [isMobile]);
+
+  useEffect(() => {
+    try {
+      storageService.setItem(DETAIL_PINNED, isDetailPinned ? 'true' : 'false');
+    } catch (e) {
+      // ignore storage errors
+    }
+  }, [isDetailPinned]);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">

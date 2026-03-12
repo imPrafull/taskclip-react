@@ -1,4 +1,4 @@
-import { storageService, REFRESH_TOKEN_KEY, USER_KEY } from "../lib/storage";
+import { storageService, REFRESH_TOKEN, USER } from "../lib/storage";
 import { toast } from "sonner";
 import { posthog } from "../lib/posthog";
 
@@ -106,7 +106,7 @@ export const apiService = {
 
       this._refreshPromise = (async () => {
         try {
-          const refreshToken = storageService.getItem(REFRESH_TOKEN_KEY);
+          const refreshToken = storageService.getItem(REFRESH_TOKEN);
           const headers = new Headers({ "Content-Type": "application/json" });
           const body = refreshToken ? JSON.stringify({ refreshToken }) : undefined;
 
@@ -125,13 +125,13 @@ export const apiService = {
           const newAccess = (data as any).accessToken;
           const newRefresh = (data as any).refreshToken;
           if (newAccess) this.setAccessToken(newAccess);
-          if (newRefresh) storageService.setItem(REFRESH_TOKEN_KEY, newRefresh);
+          if (newRefresh) storageService.setItem(REFRESH_TOKEN, newRefresh);
 
           return newAccess || null;
         } catch (err) {
           apiService.setAccessToken(null);
-          storageService.removeItem(USER_KEY);
-          storageService.removeItem(REFRESH_TOKEN_KEY);
+          storageService.removeItem(USER);
+          storageService.removeItem(REFRESH_TOKEN);
           if (typeof window !== "undefined") window.location.href = "/";
           return null;
         } finally {

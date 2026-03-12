@@ -8,7 +8,7 @@ import { AddListModal } from "./AddListModal";
 import { AddTagModal } from "./AddTagModal";
 import { useTheme } from "../hooks/useTheme";
 import { getTaskCounts } from "../api/tasks";
-import { storageService, USER_KEY } from "../lib/storage";
+import { storageService, USER } from "../lib/storage";
 import { User } from "../models/auth";
 import UserCard from "./UserCard";
 import { posthog } from "../lib/posthog";
@@ -65,7 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    const raw = storageService.getItem(USER_KEY);
+    const raw = storageService.getItem(USER);
     if (raw) {
       try {
         const parsed = JSON.parse(raw) as User;
