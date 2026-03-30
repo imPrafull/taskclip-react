@@ -197,4 +197,24 @@
     @apply bg-background text-foreground select-none;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* Prevent browser autofill from using its own yellow/blue backgrounds
+     and ensure it respects the app color variables (works for light/dark). */
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px inset hsl(var(--background));
+            box-shadow: 0 0 0px 1000px inset hsl(var(--background));
+    -webkit-text-fill-color: hsl(var(--foreground));
+    transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+  }
+
+  /* Also handle the autofill focus state */
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px inset hsl(var(--background));
+            box-shadow: 0 0 0px 1000px inset hsl(var(--background));
+    -webkit-text-fill-color: hsl(var(--foreground));
+  }
 }

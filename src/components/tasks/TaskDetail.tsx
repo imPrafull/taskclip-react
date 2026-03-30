@@ -1,19 +1,20 @@
 import { ArrowLeftIcon, PinIcon, PinOffIcon, XIcon } from "lucide-react";
-import React from "react";
-import { TaskItem, TaskStatus, statusOptionClassMap, statusBadgeClassMap } from "../../models/task";
+import React, { useState } from "react";
+import { TaskItem, TaskStatus, statusBadgeClassMap } from "../../models/task";
 import { Button } from "../ui/Button";
 
 type TaskDetailProps = {
   task: TaskItem | null;
   onClose: () => void;
-  onEdit: (task: TaskItem) => void;
-  onDelete: (taskId: string) => void;
+  onEdit: (task: TaskItem) => void | Promise<any>;
+  onDelete: (taskId: string) => void | Promise<any>;
   isMobile: boolean;
   isPinned: boolean;
   onPinToggle: () => void;
 };
 
 export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, onDelete, isMobile, isPinned, onPinToggle }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
 
   if (!task) {
     return (
@@ -36,7 +37,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
       <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button variant="ghost" size="icon" onClick={onClose} disabled={isDeleting}>
               <ArrowLeftIcon className="w-5 h-5" />
             </Button>
           )}
@@ -51,7 +52,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
                 <PinIcon className="w-5 h-5" />
               )}
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button variant="ghost" size="icon" onClick={onClose} disabled={isDeleting}>
               <XIcon className="w-5 h-5" />
             </Button>
           </div>
@@ -175,17 +176,29 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({ task, onClose, onEdit, o
 
       <div className="w-full p-6 flex gap-3 max-w-lg mx-auto">
         <Button
-          onClick={() => onDelete(task.id)}
+          onClick={async () => {
+            setIsDeleting(true);
+            try {
+              const res: any = onDelete(task.id);
+              if (res && typeof res.then === "function") {
+                await res;
+              }
+            } finally {
+              setIsDeleting(false);
+            }
+          }}
           variant="outline"
           size="lg"
+          disabled={isDeleting}
           className="flex-1 border-border text-foreground hover:bg-background"
         >
-          Delete
+          {isDeleting ? "Deleting..." : "Delete"}
         </Button>
         <Button
           onClick={() => onEdit(task)}
           size="lg"
           className="flex-1 flex items-center justify-center gap-2"
+          disabled={isDeleting}
         >
           Edit
         </Button>

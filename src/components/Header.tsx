@@ -57,7 +57,11 @@ export const Header: React.FC<Props> = ({ onOpenSidebar, onAdd, isLoading }) => 
             <MenuIcon className="w-6 h-6 text-foreground" />
           </Button>
           <div className="flex items-center">
-            <img src="/logo.png" alt="TaskClip Logo" className="w-7 h-7 pb-[2px]" />
+            <img
+              src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'}
+              alt="TaskClip Logo"
+              className="w-7 h-7 pb-[2px]"
+            />
             <h3 className="text-2xl font-bold text-foreground ml-[-7px]">askclip</h3>
           </div>
         </div>

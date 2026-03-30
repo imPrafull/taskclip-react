@@ -30,6 +30,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   const [status, setStatus] = useState<TaskStatus>(task?.status ?? TaskStatus.Todo);
   const [subtasks, setSubtasks] = useState(task?.subtasks || []);
   const [titleError, setTitleError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (listsStatus === "idle") {
@@ -73,7 +74,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
   //   );
   // };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim()) {
       setTitleError("Title is a required field.");
       return;
@@ -92,7 +93,15 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
       taskData.id = task.id;
     }
 
-    onSave(taskData);
+    setIsSaving(true);
+    try {
+      const res: any = onSave(taskData);
+      if (res && typeof res.then === "function") {
+        await res;
+      }
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -100,7 +109,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
       <div className="flex items-center justify-between p-6">
         <div className="flex items-center gap-3">
           {isMobile && (
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button variant="ghost" size="icon" onClick={onClose} disabled={isSaving}>
               <ArrowLeftIcon className="w-5 h-5" />
             </Button>
           )}
@@ -115,7 +124,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
                 {isPinned ? <PinOffIcon className="w-5 h-5" /> : <PinIcon className="w-5 h-5" />}
               </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button variant="ghost" size="icon" onClick={onClose} disabled={isSaving}>
               <XIcon className="w-5 h-5" />
             </Button>
           </div>
@@ -247,6 +256,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
           variant="outline"
           size="lg"
           className="flex-1 border-border text-foreground hover:bg-background"
+          disabled={isSaving}
         >
           Cancel
         </Button>
@@ -254,8 +264,9 @@ export const TaskForm: React.FC<TaskFormProps> = ({ task, onClose, onSave, isMob
           onClick={handleSave}
           size="lg"
           className="flex-1"
+          disabled={isSaving}
         >
-          {mode === "create" ? "Create Task" : "Save Changes"}
+          {isSaving ? (mode === "create" ? "Creating..." : "Saving...") : (mode === "create" ? "Create Task" : "Save Changes")}
         </Button>
       </div>
     </div>

@@ -2,9 +2,12 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../api/auth";
 import { Button } from "../../components/ui/Button";
+import ThemeToggle from "../../components/ui/ThemeToggle";
+import { useTheme } from "../../hooks/useTheme";
 
 export const Welcome = (): JSX.Element => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (authService.isAuthenticated()) {
@@ -13,14 +16,17 @@ export const Welcome = (): JSX.Element => {
   }, [navigate]);
 
   return (
-    <div className="bg-background w-full min-h-screen flex items-center justify-center">
+    <div className="relative bg-background w-full min-h-screen flex items-center justify-center">
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
       <div className="w-full flex flex-col md:flex-row md:max-w-6xl">
         {/* Image — top on mobile, left on desktop */}
         <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-12">
           <img
-            className="w-full max-w-[280px] md:max-w-[560px] h-auto"
+            className="w-full max-w-[280px] md:max-w-[560px] h-auto dark:brightness-90 dark:contrast-95"
             alt="Productive mind illustration"
-            src="/focus.svg"
+            src={theme === "dark" ? "/focus-dark.svg" : "/focus.svg"}
           />
         </div>
 
