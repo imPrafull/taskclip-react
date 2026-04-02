@@ -68,3 +68,7 @@ export async function getTaskCounts(): Promise<TaskCounts> {
   const data = await apiService.apiFetch<TaskCounts>("/tasks/count");
   return data;
 }
+
+export async function getTaskById(id: string): Promise<TaskItem> {
+  return apiService.apiFetch<TaskItem>(`/tasks/${id}`);
+}

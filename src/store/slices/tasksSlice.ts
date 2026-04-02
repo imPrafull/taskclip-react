@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TaskItem, TaskPayload, TaskStatus } from '../../models/task';
 import { MutableRefObject } from 'react';
-import { getTasks as getTasksApi } from '../../api/tasks';
+import { getTasks as getTasksApi, getTaskById as getTaskByIdApi } from '../../api/tasks';
 import { apiService } from '../../api/api';
 
 interface TasksState {
@@ -47,6 +47,10 @@ export const getTasks = createAsyncThunk('tasks/getTasks', async ({ page, sort, 
   } finally {
     if (loadingRef) loadingRef.current = false;
   }
+});
+
+export const fetchTaskById = createAsyncThunk('tasks/fetchTaskById', async (taskId: string) => {
+  return getTaskByIdApi(taskId);
 });
 
 export const addNewTask = createAsyncThunk('tasks/addNewTask', async (newTask: Omit<TaskPayload, 'id'> & { status?: TaskStatus }) => {
@@ -127,11 +131,19 @@ const tasksSlice = createSlice({
         if (index !== -1) {
           state.tasks[index] = action.payload;
         }
+      })
+      .addCase(fetchTaskById.fulfilled, (state, action: PayloadAction<TaskItem>) => {
+        const index = state.tasks.findIndex(t => t.id === action.payload.id);
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        } else {
+          state.tasks.push(action.payload);
+        }
       });
   },
 });
 
 export const {
-  resetTasks
+  resetTasks,
 } = tasksSlice.actions;
 export default tasksSlice.reducer;
